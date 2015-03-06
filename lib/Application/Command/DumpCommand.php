@@ -8,7 +8,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use NoccyLabs\LogPipe\Transport\TransportFactory;
-use NoccyLabs\LogPipe\Dumper\DefaultDumper;
+use NoccyLabs\LogPipe\Dumper\ConsoleDumper;
 
 class DumpCommand extends AbstractCommand
 {
@@ -25,7 +25,7 @@ class DumpCommand extends AbstractCommand
         $transport = TransportFactory::create($endpoint);
         $transport->listen();
 
-        $dumper = new DefaultDumper();
+        $dumper = new ConsoleDumper($this->output);
 
         while (true) {
             $msg = $transport->receive(true);
