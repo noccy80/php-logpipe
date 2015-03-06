@@ -28,15 +28,24 @@ class UdpTransport implements TransportInterface
     {
         if (!$this->stream) { return; }
         $msg = serialize($message);
-        @fwrite($this->stream, $msg);
+        $header = pack("vV", strlen($msg), crc32($msg));
+        @fwrite($this->stream, $header.$msg);
     }
 
     public function receive($blocking=false)
     {
         stream_set_blocking($this->stream, $blocking);
-        $msg = fread($this->stream, 8192);
-        if (!$msg) { return NULL; }
-        return unserialize($msg);
+        $msg = fread($this->stream, 65535);
+        $header = unpack("vsize/Vcrc32", substr($msg, 0,6));
+        $data = substr($msg,6);
+        if ((strlen($data) != $header['size']) || (crc32($data) != $header['crc32'])) {
+            error_log("Warning: Backet with bad crc or size encountered.");
+            return NULL;
+        }
+        if (!$msg) {
+            return NULL;
+        }
+        return unserialize($data);
     }
 
     public function listen()
