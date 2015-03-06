@@ -1,6 +1,6 @@
 {
-    "name": "logpipe/logpipe",
-    "description": "Interactive logging via named pipes",
+    "name": "noccylabs/logpipe",
+    "description": "Interactive logging via named pipes and sockets",
     "require": {
         "symfony/console": "2.6.*",
         "psr/log": "1.*",
