@@ -1,27 +1,27 @@
 LogPipe
 =======
 
-LogPipe is used to send logging information over a named pipe to a client that is
-dumping it to the console or wherever.
+## Using on command line
 
- 1. The `pipecat` utility is used to create the named pipe.
- 2. The application will look to see if the expected pipe exists, and if so dump
-    the logging output to the pipe.
- 3. `pipecat` will parse the logs and output it as desired.
- 4. When `pipecat` is closed, the named pipe is removed, and subsequent application
-    runs will not attempt to log to the pipe.
+    $ bin/logpipe dump
 
 
-## Using
 
-    use LogPipe\Logger\SimpleLogger;
+## Using with Symfony
 
-    $logger = new SimpleLogger(__DIR__."/logpipe");
-    $logger->debug("hello world");
+You need to define the LogPipeHandler as a service so that it can be used with Monolog:
 
-And pipecat:
+    services:
+        logpipe.handler:
+            class:      NoccyLabs\LogPipe\Handler\LogPipeHandler
+            arguments:  [ "udp:127.0.0.1:6999" ]
 
-    $ pipecat dump logpipe
-    hello world
-    ^C
-    $
+Then define the handler:
+
+    monolog:
+        handlers:
+            ...
+            logpipe:
+                type:   service
+                id:     logpipe.handler
+

@@ -22,8 +22,8 @@ class DefaultDumper
         $nostyle = "\e[0m";
         $bold = "\e[1m";
         $nobold = "\e[21m";
-        printf("%s [{$bold}%s{$nobold}] {$style}%s{$nostyle}\n",
-            $client, $channel, rtrim($message));
+        printf("%s {$style}%s{$nostyle}\n",
+            $client, rtrim($message));
         //echo join(",", array_keys($record)) . "\n";
     }
 }
