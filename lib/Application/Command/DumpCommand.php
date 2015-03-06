@@ -52,7 +52,11 @@ class DumpCommand extends AbstractCommand
         $dumper = new ConsoleDumper($this->output, $level);
 
         $squelched = 0;
-        $channels = explode(",",$this->input->getOption("channels"));
+        if ($this->input->getOption("channels")) {
+            $channels = explode(",",$this->input->getOption("channels"));
+        } else {
+            $channels = [];
+        }
 
         $break = false;
         pcntl_signal(SIGINT, function () use (&$break) { $break = true; });
@@ -61,7 +65,7 @@ class DumpCommand extends AbstractCommand
         while (!$break) {
             $msg = $transport->receive();
             if ($msg) {
-                if (($channels) && (!in_array($msg['channel'],$channels))) {
+                if ((count($channels) > 0) && (!in_array($msg['channel'],$channels))) {
                     $squelched++;
                 } elseif ($msg['level'] >= $level) {
                     if ($squelched > 0) {
