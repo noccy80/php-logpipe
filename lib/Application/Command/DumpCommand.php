@@ -2,6 +2,7 @@
 
 namespace NoccyLabs\LogPipe\Application\Command;
 
+use NoccyLabs\LogPipe\Application\InputHelper;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
@@ -18,6 +19,7 @@ class DumpCommand extends AbstractCommand
         $this->setDescription("Start listening for log events");
         $this->addArgument("endpoint", InputArgument::OPTIONAL, "The endpoint or pipe to dump", "udp:127.0.0.1:6999");
         $this->addOption("level", "l", InputOption::VALUE_REQUIRED, "Minimum level for a log event to be displayed", 100);
+        $this->addOption("channels", "c", InputOption::VALUE_REQUIRED, "A comma-separated list of channels to include");
         $this->setHelp(self::HELP);
     }
 
@@ -50,12 +52,20 @@ class DumpCommand extends AbstractCommand
         $dumper = new ConsoleDumper($this->output, $level);
 
         $squelched = 0;
-        while (true) {
-            $msg = $transport->receive(true);
+        $channels = explode(",",$this->input->getOption("channels"));
+
+        $break = false;
+        pcntl_signal(SIGINT, function () use (&$break) { $break = true; });
+        declare(ticks=5);
+
+        while (!$break) {
+            $msg = $transport->receive();
             if ($msg) {
-                if ($msg['level'] >= $level) {
+                if (($channels) && (!in_array($msg['channel'],$channels))) {
+                    $squelched++;
+                } elseif ($msg['level'] >= $level) {
                     if ($squelched > 0) {
-                        $this->output->writeln("<fg=black;bg=yellow> {$squelched} messages squelched </fg=black;bg=yellow>");
+                        $this->output->writeln("<fg=black;bg=yellow> {$squelched}</fg=black;bg=yellow><fg=black;bg=yellow;options=bold> messages squelched </fg=black;bg=yellow;options=bold>");
                         $squelched = 0;
                     }
                     $dumper->dump($msg);
@@ -63,8 +73,11 @@ class DumpCommand extends AbstractCommand
                     $squelched++;
                 }
             }
-            usleep(10000);
+            // $ihelp->update();
+            usleep(200000);
         }
+
+        $this->output->writeln("Ctrl-C");
 
     }
 
