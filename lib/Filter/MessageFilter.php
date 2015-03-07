@@ -4,6 +4,8 @@
 namespace NoccyLabs\LogPipe\Filter;
 
 
+use NoccyLabs\LogPipe\Transport\Message\MessageInterface;
+
 class MessageFilter implements FilterInterface {
 
     protected $included_channels = [];
@@ -30,9 +32,12 @@ class MessageFilter implements FilterInterface {
      * @param array $channels
      * @return mixed
      */
-    public function setIncludedChannels(array $channels)
+    public function setIncludedChannels($channels)
     {
-        $this->included_channels = $channels;
+        if (!is_array($channels)) {
+            $channels = explode(",", $channels);
+        }
+        $this->included_channels = array_filter($channels);
         return $this;
     }
 
@@ -52,9 +57,12 @@ class MessageFilter implements FilterInterface {
      * @param array $channels
      * @return mixed
      */
-    public function setExcludedChannels(array $channels)
+    public function setExcludedChannels($channels)
     {
-        $this->excluded_channels = $channels;
+        if (!is_array($channels)) {
+            $channels = explode(",", $channels);
+        }
+        $this->excluded_channels = array_filter($channels);
         return $this;
     }
 
@@ -109,33 +117,27 @@ class MessageFilter implements FilterInterface {
      * @param $message
      * @return mixed
      */
-    public function filterMessage($message)
+    public function filterMessage(MessageInterface $message)
     {
-        if (is_array($message)) {
-            $channel    = (array_key_exists('channel', $message)) ? $message['channel'] : '';
-            $level      = (array_key_exists('level', $message)) ? $message['level'] : 0;
-
-            if ($this->isChannelFiltered($channel)) {
-                return NULL;
-            }
-
-            if ($this->isLevelFiltered($level)) {
-                return NULL;
-            }
-
-            return $message;
+        if ($this->isChannelFiltered($message->getChannel())) {
+            return NULL;
         }
-        return NULL;
+
+        if ($this->isLevelFiltered($message->getLevel())) {
+            return NULL;
+        }
+
+        return $message;
     }
 
     public function isChannelFiltered($channel)
     {
-        if (count($this->included_channels)) {
-            return !array_key_exists($channel, $this->included_channels);
+        if (count($this->included_channels) > 0) {
+            return !in_array($channel, $this->included_channels);
         }
 
         if (count($this->excluded_channels)) {
-            return array_key_exists($channel, $this->excluded_channels);
+            return in_array($channel, $this->excluded_channels);
         }
 
         return false;

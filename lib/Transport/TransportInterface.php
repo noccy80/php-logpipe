@@ -2,6 +2,8 @@
 
 namespace NoccyLabs\LogPipe\Transport;
 
+use NoccyLabs\LogPipe\Transport\Message\MessageInterface;
+
 /**
  *
  *
@@ -17,7 +19,7 @@ interface TransportInterface
      * @param $message
      * @return mixed
      */
-    public function send($message);
+    public function send(MessageInterface $message);
 
     /**
      * Receive a message from the transport. If nothing is available to read, NULL is returned. receive() can only

@@ -5,6 +5,7 @@ namespace NoccyLabs\LogPipe\Handler;
 use Monolog\Logger;
 use Monolog\Handler\AbstractProcessingHandler;
 
+use NoccyLabs\LogPipe\Transport\Message\MonologMessage;
 use NoccyLabs\LogPipe\Transport\TransportInterface;
 use NoccyLabs\LogPipe\Transport\TransportFactory;
 
@@ -24,17 +25,13 @@ class LogPipeHandler extends AbstractProcessingHandler
 
     protected function write(array $record)
     {
+
         if (!$this->initialized) {
             $this->initialize();
         }
 
-        $this->transport->send(array(
-            'channel' => $record['channel'],
-            'level' => $record['level'],
-            'message' => $record['formatted'],
-            'time' => $record['datetime']->format('U'),
-            'client_id' => $this->client_id
-        ));
+        $message = new MonologMessage($record, $this->client_id);
+        $this->transport->send($message);
     }
 
     private function initialize()

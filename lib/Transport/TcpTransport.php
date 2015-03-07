@@ -1,11 +1,12 @@
 <?php
 
+
 namespace NoccyLabs\LogPipe\Transport;
 
-use NoccyLabs\LogPipe\Transport\Message\MessageInterface;
+use NoccyLabs\LogPipe\Message\MessageInterface;
 
-class UdpTransport implements TransportInterface
-{
+class TcpTransport {
+
     protected $host;
 
     protected $port;
@@ -24,7 +25,7 @@ class UdpTransport implements TransportInterface
         $this->port = $port;
     }
 
-    public function send(MessageInterface $message)
+    public function send($message)
     {
         if (!$this->stream) { return; }
         $msg = serialize($message);
@@ -73,10 +74,10 @@ class UdpTransport implements TransportInterface
         $errstr  = null;
 
         $this->stream = stream_socket_server(
-            "udp://{$this->host}:{$this->port}",
+            "tcp://{$this->host}:{$this->port}",
             $errno,
             $errstr,
-            STREAM_SERVER_BIND
+            STREAM_SERVER_BIND|STREAM_SERVER_LISTEN
         );
 
         if ($errno) {
@@ -96,13 +97,17 @@ class UdpTransport implements TransportInterface
         $errno   = null;
         $errstr  = null;
 
-        $this->stream = stream_socket_client(
-            "udp://{$this->host}:{$this->port}",
+        $this->stream = @stream_socket_client(
+            "tcp://{$this->host}:{$this->port}",
             $errno,
             $errstr,
             $timeout,
             STREAM_CLIENT_CONNECT,
             $context
         );
+
+        if ($errno) {
+            error_log(sprintf("%s (%d)", $errstr, $errno));
+        }
     }
 }

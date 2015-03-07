@@ -52,7 +52,18 @@ unserialized and parsed.
 **Transport URI:**
 
     udp:<host>:<port>
+    
+ -  **Issues:** Due to how UDP works, if you spawn another dumper on the same port, the first one will no longer
+    receive any data, but silently sit there until killed.
 
+### TCP
+
+The TCP transport works kinda like the UDP transport. However, since TCP is connection-oriented some complications
+may occur if no dumper is available. This needs more testing.
+
+**Transport URI:**
+
+    tcp:<host>:<port>
 
 ### Pipe
 

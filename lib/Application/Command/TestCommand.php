@@ -5,7 +5,7 @@ namespace NoccyLabs\LogPipe\Application\Command;
 
 use NoccyLabs\LogPipe\Handler\LogPipeHandler;
 use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
+use Symfony\Component\Console\Input\InputArgument;
 
 class TestCommand extends AbstractCommand {
 
@@ -13,15 +13,17 @@ class TestCommand extends AbstractCommand {
     {
         $this->setName("test");
         $this->setDescription("Sends a few test events");
+        $this->addArgument("endpoint", InputArgument::OPTIONAL, "The endpoint or pipe to dump", "udp:127.0.0.1:6999");
     }
 
 
     protected function exec()
     {
 
+        $endpoint = $this->input->getArgument("endpoint");
+
         $logger = new Logger("main");
-        $logger->pushHandler(new LogPipeHandler("udp:127.0.0.1:6999"));
-        $logger->pushHandler(new StreamHandler(STDOUT));
+        $logger->pushHandler(new LogPipeHandler($endpoint));
 
         foreach(["debug","info","notice","warning","error","critical","alert","emergency"] as $level) {
             $logger->{$level}("Test log event");
