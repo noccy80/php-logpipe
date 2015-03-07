@@ -11,6 +11,7 @@ class PipeCatApplication extends Application
         $inst = new self("pipecat", "0.1");
         $inst->add(new Command\DumpCommand);
         $inst->add(new Command\ChannelsCommand);
+        $inst->add(new Command\TestCommand);
         $inst->run();
     }
 }

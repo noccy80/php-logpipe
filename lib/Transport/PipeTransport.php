@@ -1,15 +1,18 @@
 <?php
 
+
 namespace NoccyLabs\LogPipe\Transport;
 
-/**
- *
- *
- * Interface TransportInterface
- * @package NoccyLabs\LogPipe\Transport
- */
-interface TransportInterface
+
+use NoccyLabs\LogPipe\Transport\TransportInterface;
+
+class PipeTransport implements TransportInterface
 {
+    public function __construct($params)
+    {
+        echo "New pipe on {$params}\n";
+    }
+
     /**
      * Send a message over the transport. This requires that connect() has been called prior. It can not be used on
      * a transport after calling listen().
@@ -17,7 +20,10 @@ interface TransportInterface
      * @param $message
      * @return mixed
      */
-    public function send($message);
+    public function send($message)
+    {
+        // TODO: Implement send() method.
+    }
 
     /**
      * Receive a message from the transport. If nothing is available to read, NULL is returned. receive() can only
@@ -26,20 +32,30 @@ interface TransportInterface
      * @param bool $blocking
      * @return mixed
      */
-    public function receive($blocking=false);
+    public function receive($blocking = false)
+    {
+        // TODO: Implement receive() method.
+    }
 
     /**
      * Start listening for connections
      *
      * @return mixed
      */
-    public function listen();
+    public function listen()
+    {
+        // TODO: Implement listen() method.
+    }
 
     /**
      * Connect to a listening transport
      *
      * @return mixed
      */
-    public function connect();
+    public function connect()
+    {
+        // TODO: Implement connect() method.
+    }
+
 
 }

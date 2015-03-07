@@ -27,8 +27,12 @@ class ConsoleDumper
             $style = "fg=green;options=bold";
         } elseif ($level < 400) {
             $style = "fg=yellow;options=bold";
-        } else {
+        } elseif ($level < 500) {
             $style = "fg=red;options=bold";
+        } elseif ($level < 600) {
+            $style = "fg=yellow;bg=red";
+        } else {
+            $style = "fg=red;bg=yellow;options=bold";
         }
 
         $this->output->writeln(
