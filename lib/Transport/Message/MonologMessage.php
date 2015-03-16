@@ -35,7 +35,7 @@ class MonologMessage implements MessageInterface {
     public function __construct(array $record=null, $client_id=null)
     {
         $this->record = $record;
-        $this->client_id = $client_id;
+        $this->client_id = $client_id?:uniqid();
     }
 
     public function getChannel()

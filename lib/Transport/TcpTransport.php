@@ -13,6 +13,12 @@ class TcpTransport {
 
     protected $stream;
 
+    protected $clients = [];
+
+    protected $buffer = [];
+
+    protected $messages = [];
+
     public function __construct($endpoint)
     {
         list($host, $port) = explode(":", $endpoint);
@@ -36,29 +42,61 @@ class TcpTransport {
     public function receive($blocking=false)
     {
         static $buffer;
+        if (!is_array($buffer)) { $buffer = []; }
 
-        stream_set_blocking($this->stream, $blocking);
+        $read = [ $this->stream ];
+        $read = array_merge($read, $this->clients);
+        $write = [];
+        $except = [];
 
-        $read = fread($this->stream, 65535);
+        if (stream_select($read, $write, $except, 0)) {
 
-        $buffer .= $read;
-
-        if (strlen($buffer) > 6) {
-            $header = unpack("vsize/Vcrc32", substr($buffer, 0, 6));
-            if ((strlen($buffer) < $header['size'] - 6)) {
-                return NULL;
-            }
-            $data = substr($buffer, 6, $header['size']);
-            $buffer = substr($buffer, $header['size']+6);
-            if (crc32($data) != $header['crc32']) {
-                $buffer = null;
-                error_log("Warning: Message with invalid crc32 encountered.");
-                return NULL;
+            if (in_array($this->stream, $read)) {
+                $client = stream_socket_accept($this->stream);
+                $this->clients[] = $client;
             }
 
-            $rcv = @unserialize($buffer . $data);
-            return $rcv;
+            foreach ($read as $stream) {
+                if (in_array($stream, $this->clients)) {
+                    $sh = (string)$stream;
+                    stream_set_blocking($stream, false);
+                    $read = fread($stream, 65535);
+    
+                    if ($read == null) {
+                        //echo "Closing {$sh}\n";
+                        // remove the client from the list
+                        $this->clients = array_diff($this->clients, array($stream));
+                        // close the socket and resume
+                        fclose($stream);
+                        unset($this->buffer[$sh]);
+                        break;
+                    }
+    
+                    @$this->buffer[$sh] .= $read;
+    
+                    //printf("Buffer %s len=%d\n", $sh, strlen($this->buffer[$sh]));
+
+                    while (strlen($this->buffer[$sh]) > 6) {
+                        $header = unpack("vsize/Vcrc32", substr($this->buffer[$sh], 0, 6));
+                        if ((strlen($this->buffer[$sh]) < $header['size'] - 6)) {
+                            echo "Insufficient data\n";
+                            break;
+                        }
+                        $data = substr($this->buffer[$sh], 6, $header['size']);
+                        $this->buffer[$sh] = substr($this->buffer[$sh], $header['size']+6);
+                        //printf("Popped data (len=%d) buffer remaining len=%d\n", strlen($data), strlen($this->buffer[$sh]));
+                        if (crc32($data) != $header['crc32']) {
+                            $this->buffer[$sh] = null;
+                            error_log("Warning: Message with invalid crc32 encountered.");
+                            break;
+                        }
+                        $rcv = @unserialize($data);
+                        $this->messages[] = $rcv;
+                    }
+                }
+            }
         }
+        return (count($this->messages) > 0) ? array_shift($this->messages) : NULL;
 
     }
 
@@ -107,7 +145,8 @@ class TcpTransport {
         );
 
         if ($errno) {
-            error_log(sprintf("%s (%d)", $errstr, $errno));
+            // error_log(sprintf("%s (%d)", $errstr, $errno));
+            $this->stream = NULL;
         }
     }
 }

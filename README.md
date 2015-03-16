@@ -59,7 +59,7 @@ unserialized and parsed.
 ### TCP
 
 The TCP transport works kinda like the UDP transport. However, since TCP is connection-oriented some complications
-may occur if no dumper is available. This needs more testing.
+may occur if no dumper is available. This needs more testing. It should however be able to handle bigger messages.
 
 **Transport URI:**
 
@@ -77,3 +77,17 @@ listening for connections.
 **Transport URI:**
 
     pipe:<path>
+
+## Frequently Asked Questions (FAQ)
+
+**Q: What does `packet with invalid checksum` mean?**
+
+This happens when using the UDP transport. TCP is connection-oriented, and thus big messages
+can be transmitted by fragmenting and reassembling the packets. UDP however, is datagram
+oriented. Thus, if two clients send messages at the same time, and one of them end up being
+fragmented you end up with invalid data.
+
+To work around this issue, LogPipe adds a header block with the expected size and crc32 of
+the data to make sure that frames are properly decoded. If the crc32 does not check out,
+the buffer is discarded and the message in question is displayed. If you get this a lot,
+try using the tcp transport.
