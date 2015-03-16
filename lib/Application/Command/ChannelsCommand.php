@@ -34,10 +34,10 @@ class ChannelsCommand extends AbstractCommand
         while (!$break) {
             $msg = $transport->receive();
             if ($msg) {
-                $channel = $msg['channel'];
+                $channel = $msg->getChannel();
                 $this->infoFancy($channel);
             }
-            usleep(200000);
+            usleep(10000);
         }
 
         $this->output->writeln("Ctrl-C");
@@ -50,7 +50,7 @@ class ChannelsCommand extends AbstractCommand
 
         if (!is_array($channels)) { $channels = []; }
 
-        if (!in_array($channel, $channels)) {
+        if (!array_key_exists($channel, $channels)) {
             $channels[$channel] = 1;
         } else {
             $channels[$channel]++;

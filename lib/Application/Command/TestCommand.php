@@ -29,6 +29,14 @@ class TestCommand extends AbstractCommand {
             $logger->{$level}("Test log event");
         }
 
+        $logger = new Logger("alternate");
+        $logger->pushHandler(new LogPipeHandler($endpoint));
+
+        foreach(["debug","info","notice","warning","error","critical","alert","emergency"] as $level) {
+            $logger->{$level}("Test log event");
+        }
+
+
     }
 
 }
