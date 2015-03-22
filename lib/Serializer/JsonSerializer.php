@@ -12,7 +12,7 @@ class JsonSerializer implements SerializerInterface
      */
     public function getName()
     {
-        return "serializer.json";
+        return "json";
     }
 
     /**

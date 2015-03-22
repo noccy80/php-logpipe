@@ -12,7 +12,7 @@ class PhpSerializer implements SerializerInterface
      */
     public function getName()
     {
-        return "serializer.php";
+        return "php";
     }
 
     /**

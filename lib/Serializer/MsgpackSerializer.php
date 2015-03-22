@@ -12,7 +12,7 @@ class MsgpackSerializer implements SerializerInterface
      */
     public function getName()
     {
-        return "serializer.msgpack";
+        return "msgpack";
     }
 
     /**

@@ -3,14 +3,13 @@
 
 namespace NoccyLabs\LogPipe\Transport;
 
-
+use NoccyLabs\LogPipe\Message\MessageInterface;
 use NoccyLabs\LogPipe\Transport\TransportInterface;
 
 class PipeTransport implements TransportInterface
 {
     public function __construct($params)
     {
-        echo "New pipe on {$params}\n";
     }
 
     /**
@@ -20,7 +19,7 @@ class PipeTransport implements TransportInterface
      * @param $message
      * @return mixed
      */
-    public function send($message)
+    public function send(MessageInterface $message)
     {
         // TODO: Implement send() method.
     }
