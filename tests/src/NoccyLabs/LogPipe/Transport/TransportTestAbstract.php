@@ -16,25 +16,40 @@ abstract class TransportTestAbstract extends \PhpUnit_Framework_TestCase
         $endpoint = $this->getEndpoint();
 
         $this->server = TransportFactory::create($endpoint);
-        $this->server->listen();
-
         $this->client = TransportFactory::create($endpoint);
-        $this->client->connect();
     }
 
     public function teardown()
     {
-        $this->server->close();
-        $this->client->close();
+        if ($this->server) {
+            $this->server->close();
+        }
+        if ($this->client) {
+            $this->client->close();
+        }
     }
 
     abstract public function getEndpoint();
+
+    public function testThatEndpointsCouldBeCreated()
+    {
+        $this->assertNotNull($this->server);
+        $this->assertNotNull($this->client);
+    }
+
+    public function testStartClientWithoutServerPresent()
+    {
+        $this->client->connect();
+    }
 
     /**
      * @dataProvider getMessages
      */
     public function testSendingMessages($message)
     {
+        $this->server->listen();
+        $this->client->connect();
+
         $this->client->send($message);
         $tick = 0;
         while (!($received = $this->server->receive())) {

@@ -5,11 +5,21 @@ namespace NoccyLabs\LogPipe\Transport;
 
 use NoccyLabs\LogPipe\Message\MessageInterface;
 use NoccyLabs\LogPipe\Transport\TransportInterface;
+use NoccyLabs\LogPipe\Posix\Fifo;
 
-class PipeTransport implements TransportInterface
+class PipeTransport extends TransportAbstract
 {
+    protected $fifo;
+
+    protected $is_listener;
+
     public function __construct($params)
     {
+        list($path, $options) = explode(":", $params.':');
+
+        $this->fifo = new Fifo($path);
+
+        parent::__construct($options);
     }
 
     /**
@@ -21,7 +31,13 @@ class PipeTransport implements TransportInterface
      */
     public function send(MessageInterface $message)
     {
-        // TODO: Implement send() method.
+        if (!$this->stream) { return; }
+        try {
+            $data = $this->pack($message);
+            $this->fifo->write($data);
+        } catch (\Exception $e) {
+            // Do nothing with this message if serialization failed.
+        }
     }
 
     /**
@@ -31,10 +47,17 @@ class PipeTransport implements TransportInterface
      * @param bool $blocking
      * @return mixed
      */
-    public function receive($blocking = false)
+    public function receive($blocking=false)
     {
-        // TODO: Implement receive() method.
+        static $buffer;
+
+        $read = $this->fifo->read(65535);
+
+        $buffer .= $read;
+
+        return $this->unpack($buffer);
     }
+
 
     /**
      * Start listening for connections
@@ -43,7 +66,8 @@ class PipeTransport implements TransportInterface
      */
     public function listen()
     {
-        // TODO: Implement listen() method.
+        $this->is_listener = true;
+        $this->fifo->create();
     }
 
     /**
@@ -53,11 +77,16 @@ class PipeTransport implements TransportInterface
      */
     public function connect()
     {
-        // TODO: Implement connect() method.
+        $this->fifo->open();
     }
 
     public function close()
     {
+        if ($this->is_listener) {
+            $this->fifo->destroy();
+        } else {
+            $this->fifo->close();
+        }
     }
 
 }

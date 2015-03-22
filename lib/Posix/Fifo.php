@@ -1,9 +1,13 @@
 <?php
 
-namespace LogPipe\Posix;
+namespace NoccyLabs\LogPipe\Posix;
 
 class Fifo
 {
+    protected $path;
+
+    protected $fifo;
+
     public function __construct($path)
     {
         $this->path = $path;
@@ -27,8 +31,16 @@ class Fifo
         $this->fifo = fopen($this->path, "w");
     }
 
+    public function close()
+    {
+        if (is_resource($this->fifo)) {
+            fclose($this->fifo);
+        }
+    }
+
     public function destroy()
     {
+        $this->close();
         if (file_exists($this->path)) {
             unlink($this->path);
         }
