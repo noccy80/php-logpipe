@@ -3,8 +3,9 @@
 namespace NoccyLabs\LogPipe\Transport;
 
 use NoccyLabs\LogPipe\Message\MessageInterface;
+use NoccyLabs\LogPipe\Serializer\SerializerFactory;
 
-class UdpTransport implements TransportInterface
+class UdpTransport extends TransportAbstract
 {
     protected $host;
 
@@ -14,7 +15,7 @@ class UdpTransport implements TransportInterface
 
     public function __construct($endpoint)
     {
-        list($host, $port) = explode(":", $endpoint);
+        list($host, $port, $options) = explode(":", $endpoint.':');
 
         if (($port<1) || ($port>65535)) {
             throw new \InvalidArgumentException("Port must be between 1 and 65535");
@@ -22,15 +23,16 @@ class UdpTransport implements TransportInterface
 
         $this->host = $host;
         $this->port = $port;
+
+        parent::__construct($options);
     }
 
     public function send(MessageInterface $message)
     {
         if (!$this->stream) { return; }
         try {
-            $msg = serialize($message);
-            $header = pack("vV", strlen($msg), crc32($msg));
-            @fwrite($this->stream, $header.$msg);
+            $data = $this->pack($message);
+            @fwrite($this->stream, $data);
         } catch (\Exception $e) {
             // Do nothing with this message if serialization failed.
         }
@@ -45,24 +47,7 @@ class UdpTransport implements TransportInterface
         $read = fread($this->stream, 65535);
 
         $buffer .= $read;
-
-        if (strlen($buffer) > 6) {
-            $header = unpack("vsize/Vcrc32", substr($buffer, 0, 6));
-            if ((strlen($buffer) < $header['size'] - 6)) {
-                return NULL;
-            }
-            $data = substr($buffer, 6, $header['size']);
-            $buffer = substr($buffer, $header['size']+6);
-            if (crc32($data) != $header['crc32']) {
-                $buffer = null;
-                error_log("Warning: Message with invalid crc32 encountered.");
-                return NULL;
-            }
-
-            $rcv = @unserialize($buffer . $data);
-            return $rcv;
-        }
-
+        return $this->unpack($buffer);
     }
 
     public function listen()

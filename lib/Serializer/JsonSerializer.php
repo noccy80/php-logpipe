@@ -41,7 +41,7 @@ class JsonSerializer implements SerializerInterface
         }
         $class = $data[0];
         $inst = new $class();
-        $inst->setData($data[1]);
+        $inst->setData((array)$data[1]);
         return $inst;
     }
 }

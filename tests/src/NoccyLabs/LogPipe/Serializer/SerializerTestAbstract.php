@@ -3,6 +3,7 @@
 namespace NoccyLabs\LogPipe\Serializer;
 
 use NoccyLabs\LogPipe\Message\MonologMessage;
+use NoccyLabs\LogPipe\Message\ConsoleMessage;
 
 abstract class SerializerTestAbstract extends \PhpUnit_Framework_TestCase
 {
@@ -34,8 +35,7 @@ abstract class SerializerTestAbstract extends \PhpUnit_Framework_TestCase
     {
         $messages = [];
 
-        $messages[] = [
-            new MonologMessage(array (
+        $messages[] = [new MonologMessage(array (
                 'message' => 'Oh my god!',
                 'context' => array (),
                 'level' => 600,
@@ -48,8 +48,14 @@ abstract class SerializerTestAbstract extends \PhpUnit_Framework_TestCase
                 )),
                 'extra' => array (),
                 'formatted' => '[2015-03-07 04:20:39] main.EMERGENCY: Oh my god! [] []'
-            )) ]
-        ;
+            ))];
+
+        $messages[] = [new ConsoleMessage([
+            "_client_id" => "tester",
+            "message" => "This is a message",
+            "channel" => "php.ERROR",
+            "level" => 500
+        ])];
 
         return $messages;
     }

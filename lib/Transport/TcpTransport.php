@@ -5,7 +5,7 @@ namespace NoccyLabs\LogPipe\Transport;
 
 use NoccyLabs\LogPipe\Message\MessageInterface;
 
-class TcpTransport {
+class TcpTransport extends TransportAbstract {
 
     protected $host;
 
@@ -21,7 +21,7 @@ class TcpTransport {
 
     public function __construct($endpoint)
     {
-        list($host, $port) = explode(":", $endpoint);
+        list($host, $port, $options) = explode(":", $endpoint.':');
 
         if (($port<1) || ($port>65535)) {
             throw new \InvalidArgumentException("Port must be between 1 and 65535");
@@ -29,17 +29,18 @@ class TcpTransport {
 
         $this->host = $host;
         $this->port = $port;
+
+        parent::__construct($options);
     }
 
-    public function send($message)
+    public function send(MessageInterface $message)
     {
         if (!$this->stream) { return; }
         try {
-            $msg = serialize($message);
-            $header = pack("vV", strlen($msg), crc32($msg));
-            @fwrite($this->stream, $header.$msg);
+            $data = $this->pack($message);
+            @fwrite($this->stream, $data);
         } catch (\Exception $e) {
-            // Do nothing if unable to serialize
+            // Do nothing with this message if serialization failed.
         }
     }
 
@@ -80,7 +81,8 @@ class TcpTransport {
     
                     //printf("Buffer %s len=%d\n", $sh, strlen($this->buffer[$sh]));
 
-                    while (strlen($this->buffer[$sh]) > 6) {
+                    while (($msg = $this->unpack($this->buffer[$sh]))) {
+                    /*while (strlen($this->buffer[$sh]) > 6) {
                         $header = unpack("vsize/Vcrc32", substr($this->buffer[$sh], 0, 6));
                         if ((strlen($this->buffer[$sh]) < $header['size'] - 6)) {
                             echo "Insufficient data\n";
@@ -94,8 +96,8 @@ class TcpTransport {
                             error_log("Warning: Message with invalid crc32 encountered.");
                             break;
                         }
-                        $rcv = @unserialize($data);
-                        $this->messages[] = $rcv;
+                        $rcv = @unserialize($data);*/
+                        $this->messages[] = $msg;
                     }
                 }
             }

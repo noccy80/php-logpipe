@@ -60,6 +60,9 @@ LogPipe logger.
                 type:   service
                 id:     logpipe.handler
 
+To use a custom serializer, provide it with the endpoint URI: `udp:127.0.0.1:6999:serializer=msgpack` etc.
+As the policy is *fail and forget*, you will not receive any errors if the serializer is not supported. Calling
+on a non-existing serializer will throw an exception.
 
 ## Using elsewhere
 
@@ -67,7 +70,7 @@ LogPipe can be set up to automatically log exceptions and errors:
 
     use NoccyLabs\LogPipe\Handler\ConsoleHandler;
 
-    $handler = new ConsoleHandler("tcp:127.0.0.1:9999", "json");
+    $handler = new ConsoleHandler("tcp:127.0.0.1:9999:serializer=json");
     $handler->setExceptionReporting(true);
     $handler->setErrorReporting(true);
 
@@ -125,13 +128,21 @@ LogPipe will fail quietly if anything goes wrong. This includes serialization of
 event, transport errors and more. This is done so that a problematic logger or transport
 will not cause the application being diagnosed to misbehave.
 
+**Q: LogPipe is causing my application to misbehave!**
+
+Please report this ASAP, unless you are able to fix the issue and commit a pull request.
+As previously mentioned, the strategy is *fail and forget*, meaning that ALL AND ANY errors
+that occur should be silently consumed, as to prevent the application from failing or 
+misbehaving due to an auxillary logger.
+
 
 ## Version history
 
-    0.3     - Added serializers
+    0.1.5   - More unit tests, serializers enabled.
+    0.1.3   - Added serializers
             - Updated message- and transport structure
             - Improved console commands
-    0.2     - TCP transport considered functional
+    0.1.2   - TCP transport considered functional
             - Added support for using the envvar APP_ID, or the define() APP_ID to specify
               the prefix to use. Setting neither will use the hostname as app id.
     0.1     - Initial release

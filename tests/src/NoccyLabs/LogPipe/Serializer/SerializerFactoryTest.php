@@ -14,7 +14,21 @@ class SerializerFactoryTest extends \PhpUnit_Framework_TestCase
 
     public function testPhpSerializerBeingAvailable()
     {
-        $serializer = SerializerFactory::getSerializerForTag("P");
+        $serializer = SerializerFactory::getSerializerForTag("php");
+        $this->assertNotNull($serializer);
+        $this->assertInstanceOf("NoccyLabs\\LogPipe\\Serializer\\SerializerInterface", $serializer);
+    }
+
+    public function testJsonSerializerBeingAvailable()
+    {
+        $serializer = SerializerFactory::getSerializerForTag("json");
+        $this->assertNotNull($serializer);
+        $this->assertInstanceOf("NoccyLabs\\LogPipe\\Serializer\\SerializerInterface", $serializer);
+    }
+
+    public function testMsgpackSerializerBeingAvailable()
+    {
+        $serializer = SerializerFactory::getSerializerForTag("msgpack");
         $this->assertNotNull($serializer);
         $this->assertInstanceOf("NoccyLabs\\LogPipe\\Serializer\\SerializerInterface", $serializer);
     }

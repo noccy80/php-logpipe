@@ -7,9 +7,9 @@ use NoccyLabs\LogPipe\Exception\SerializerException;
 class SerializerFactory
 {
     protected static $default_serializers = [
-        "P" => "PhpSerializer",
-        "j" => "JsonSerializer",
-        "m" => "MsgpackSerializer",
+        "PhpSerializer",
+        "JsonSerializer",
+        "MsgpackSerializer",
     ];
 
     protected static $serializers = [];
@@ -19,9 +19,10 @@ class SerializerFactory
         static $was_setup;
         if ($was_setup) { return; }
 
-        foreach (self::$default_serializers as $tag=>$serializer) {
+        foreach (self::$default_serializers as $serializer) {
             $serializer = "NoccyLabs\\LogPipe\\Serializer\\{$serializer}";
             $inst = new $serializer();
+            $tag = $inst->getName();
             self::$serializers[$tag] = $inst;
         }
 
