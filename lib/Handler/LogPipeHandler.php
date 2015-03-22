@@ -5,7 +5,7 @@ namespace NoccyLabs\LogPipe\Handler;
 use Monolog\Logger;
 use Monolog\Handler\AbstractProcessingHandler;
 
-use NoccyLabs\LogPipe\Transport\Message\MonologMessage;
+use NoccyLabs\LogPipe\Message\MonologMessage;
 use NoccyLabs\LogPipe\Transport\TransportInterface;
 use NoccyLabs\LogPipe\Transport\TransportFactory;
 
@@ -18,9 +18,20 @@ class LogPipeHandler extends AbstractProcessingHandler
 
     public function __construct($transport, $level = Logger::DEBUG, $bubble = true)
     {
-        $this->client_id = uniqid(gethostname().'/');
+        $this->setClientId(null);
         $this->transport_uri = $transport;
         parent::__construct($level, $bubble);
+    }
+
+    public function setClientId($client_id, $request_id=null)
+    {
+        if (!$client_id) {
+            $client_id = (getenv("APP_ID") ? : (defined("APP_ID") ? APP_ID : gethostname()));
+        }
+        if (!$request_id) {
+            $request_id = sprintf("%04x%04x", rand(0,0xFFFF), rand(0,0xFFFF));
+        }
+        $this->client_id = sprintf("%s:%s", $client_id, $request_id);
     }
 
     protected function write(array $record)

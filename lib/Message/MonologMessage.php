@@ -1,7 +1,6 @@
 <?php
 
-
-namespace NoccyLabs\LogPipe\Transport\Message;
+namespace NoccyLabs\LogPipe\Message;
 
 use NoccyLabs\LogPipe\Dumper\Formatter;
 
@@ -24,18 +23,35 @@ use NoccyLabs\LogPipe\Dumper\Formatter;
  *
  *
  * Class MonologMessage
- * @package NoccyLabs\LogPipe\Transport\Message
+ * @package NoccyLabs\LogPipe\Message
  */
 class MonologMessage implements MessageInterface {
 
-    protected $record;
+    protected $record = [];
 
     protected $client_id;
 
     public function __construct(array $record=null, $client_id=null)
     {
         $this->record = $record;
+
+        // TODO: This is to handle unserializable extra data. There has to be a better
+        // way to do this.
+        unset ($this->record['extra']);
+        unset ($this->record['datetime']);
+
         $this->client_id = $client_id?:uniqid();
+    }
+
+    public function getData()
+    {
+        return [ $this->client_id, $this->record ];
+    }
+
+    public function setData(array $data)
+    {
+        $this->client_id = $data[0];
+        $this->record = (array)$data[1];
     }
 
     public function getChannel()

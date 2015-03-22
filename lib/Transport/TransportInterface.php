@@ -2,7 +2,7 @@
 
 namespace NoccyLabs\LogPipe\Transport;
 
-use NoccyLabs\LogPipe\Transport\Message\MessageInterface;
+use NoccyLabs\LogPipe\Message\MessageInterface;
 
 /**
  *

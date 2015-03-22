@@ -34,9 +34,13 @@ class TcpTransport {
     public function send($message)
     {
         if (!$this->stream) { return; }
-        $msg = serialize($message);
-        $header = pack("vV", strlen($msg), crc32($msg));
-        @fwrite($this->stream, $header.$msg);
+        try {
+            $msg = serialize($message);
+            $header = pack("vV", strlen($msg), crc32($msg));
+            @fwrite($this->stream, $header.$msg);
+        } catch (\Exception $e) {
+            // Do nothing if unable to serialize
+        }
     }
 
     public function receive($blocking=false)

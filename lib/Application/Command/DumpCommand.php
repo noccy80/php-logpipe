@@ -68,7 +68,7 @@ class DumpCommand extends AbstractCommand
             usleep(1000);
         }
 
-        $this->output->writeln("\nExiting");
+        $this->output->writeln("\nGot SIGINT, Exiting");
 
     }
 

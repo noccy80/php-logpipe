@@ -2,8 +2,8 @@
 
 namespace NoccyLabs\LogPipe\Dumper;
 
-use NoccyLabs\LogPipe\Transport\Message\MessageInterface;
-use NoccyLabs\LogPipe\Transport\Message\MonologMessage;
+use NoccyLabs\LogPipe\Message\MessageInterface;
+use NoccyLabs\LogPipe\Message\MonologMessage;
 use Symfony\Component\Console\Output\OutputInterface;
 
 class ConsoleDumper

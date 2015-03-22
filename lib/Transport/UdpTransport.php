@@ -2,7 +2,7 @@
 
 namespace NoccyLabs\LogPipe\Transport;
 
-use NoccyLabs\LogPipe\Transport\Message\MessageInterface;
+use NoccyLabs\LogPipe\Message\MessageInterface;
 
 class UdpTransport implements TransportInterface
 {
@@ -27,9 +27,13 @@ class UdpTransport implements TransportInterface
     public function send(MessageInterface $message)
     {
         if (!$this->stream) { return; }
-        $msg = serialize($message);
-        $header = pack("vV", strlen($msg), crc32($msg));
-        @fwrite($this->stream, $header.$msg);
+        try {
+            $msg = serialize($message);
+            $header = pack("vV", strlen($msg), crc32($msg));
+            @fwrite($this->stream, $header.$msg);
+        } catch (\Exception $e) {
+            // Do nothing with this message if serialization failed.
+        }
     }
 
     public function receive($blocking=false)

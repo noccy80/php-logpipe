@@ -3,8 +3,7 @@
 
 namespace NoccyLabs\LogPipe\Filter;
 
-
-use NoccyLabs\LogPipe\Transport\Message\MessageInterface;
+use NoccyLabs\LogPipe\Message\MessageInterface;
 
 class MessageFilter implements FilterInterface {
 
