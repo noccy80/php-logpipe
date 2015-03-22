@@ -44,4 +44,6 @@ interface TransportInterface
      */
     public function connect();
 
+    public function close();
+
 }

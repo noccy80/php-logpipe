@@ -57,5 +57,8 @@ class PipeTransport implements TransportInterface
         // TODO: Implement connect() method.
     }
 
+    public function close()
+    {
+    }
 
 }

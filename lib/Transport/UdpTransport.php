@@ -109,4 +109,8 @@ class UdpTransport implements TransportInterface
             $context
         );
     }
+
+    public function close()
+    {
+    }
 }

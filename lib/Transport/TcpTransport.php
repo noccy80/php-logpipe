@@ -153,4 +153,12 @@ class TcpTransport {
             $this->stream = NULL;
         }
     }
+
+    public function close()
+    {
+        if (is_resource($this->stream)) {
+            fclose($this->stream);
+        }
+    }
+
 }
