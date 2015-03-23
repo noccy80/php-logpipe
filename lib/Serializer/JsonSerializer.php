@@ -18,6 +18,14 @@ class JsonSerializer implements SerializerInterface
     /**
      * {@inheritDoc}
      */
+    public function getTag()
+    {
+        return "j";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function serialize(MessageInterface $message)
     {
         $raw = [ get_class($message), $message->getData() ];

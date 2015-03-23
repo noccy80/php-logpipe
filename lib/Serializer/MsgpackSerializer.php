@@ -18,6 +18,14 @@ class MsgpackSerializer implements SerializerInterface
     /**
      * {@inheritDoc}
      */
+    public function getTag()
+    {
+        return "m";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function serialize(MessageInterface $message)
     {
         $raw = [ get_class($message), $message->getData() ];

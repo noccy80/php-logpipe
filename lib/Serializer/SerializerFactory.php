@@ -22,7 +22,7 @@ class SerializerFactory
         foreach (self::$default_serializers as $serializer) {
             $serializer = "NoccyLabs\\LogPipe\\Serializer\\{$serializer}";
             $inst = new $serializer();
-            $tag = $inst->getName();
+            $tag = $inst->getTag();
             self::$serializers[$tag] = $inst;
         }
 
@@ -36,5 +36,16 @@ class SerializerFactory
             return self::$serializers[$tag];
         }
         throw new SerializerException("No serializer registered for tag [{$tag}]");
+    }
+
+    public static function getSerializerForName($name)
+    {
+        self::setup();
+        foreach (self::$serializers as $serializer) {
+            if ($serializer->getName() == $name) {
+                return $serializer;
+            }
+        }
+        throw new SerializerException("No serializer registered for name [{$name}]");
     }
 }

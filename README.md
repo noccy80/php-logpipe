@@ -18,6 +18,9 @@ To install into a project using composer:
 
     $ composer require noccylabs/logpipe
 
+As LogPipe uses external streams to communicate between logger and dumper, both are valid. Minor differences exist
+in the protocols currently however, meaning that the version of the global version really should match that used by
+the project.
 
 ## Using on command line
 

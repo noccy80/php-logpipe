@@ -18,6 +18,14 @@ class PhpSerializer implements SerializerInterface
     /**
      * {@inheritDoc}
      */
+    public function getTag()
+    {
+        return "P";
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function serialize(MessageInterface $message)
     {
         try {

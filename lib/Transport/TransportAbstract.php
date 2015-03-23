@@ -24,7 +24,7 @@ abstract class TransportAbstract implements TransportInterface
 
         $this->options = (array)$parsed;
 
-        $this->serializer = SerializerFactory::getSerializerForTag($this->getOption('serializer', 'php'));
+        $this->serializer = SerializerFactory::getSerializerForName($this->getOption('serializer', 'php'));
     }
 
     public function getOption($name, $default=null)

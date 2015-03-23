@@ -10,7 +10,7 @@ This is done by `PipeV1Protocol`.
                             n/s | |    '----- Version (0x1=current)
                                 | '---------- Compressed (1=GZ/BZ, 0=no)
                                 '------------ If compressed (1=BZ2, 0=GZ)
-    1 byte      Format      Used to specify the serialization format.
+    1 byte      Format      Serialization used:
                               'P'  Standard PHP serializer
                               'j'  Json serializer
                               'm'  MsgPack serializer

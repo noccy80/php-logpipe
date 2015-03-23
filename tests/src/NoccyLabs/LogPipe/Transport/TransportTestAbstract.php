@@ -42,6 +42,14 @@ abstract class TransportTestAbstract extends \PhpUnit_Framework_TestCase
         $this->client->connect();
     }
 
+    public function testWritingToClientWithoutServerPresent()
+    {
+        $this->client->connect();
+        foreach ($this->getMessages() as $message) {
+            $this->client->send($message[0]);
+        }
+    }
+
     /**
      * @dataProvider getMessages
      */
