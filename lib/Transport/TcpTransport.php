@@ -77,7 +77,10 @@ class TcpTransport extends TransportAbstract {
                         break;
                     }
     
-                    @$this->buffer[$sh] .= $read;
+                    if (!array_key_exists($sh, $this->buffer)) {
+                        $this->buffer[$sh] = null;
+                    }
+                    $this->buffer[$sh] .= $read;
     
                     //printf("Buffer %s len=%d\n", $sh, strlen($this->buffer[$sh]));
 

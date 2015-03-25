@@ -3,18 +3,4 @@
 
 (@include_once __DIR__ . '/../vendor/autoload.php') || @include_once __DIR__ . '/../../../autoload.php';
 
-buster( [ "NoccyLabs\LogPipe\Application\PipeCatApplication", "main" ] );
-
-function buster(callable $main, array $args=[], array $options=[]) {
-    declare(ticks=1000);
-    $options = array_merge(array(
-        "memory.threshold" => 3000000
-    ), $options);
-    register_tick_function(function () use ($options) {
-        $mem = memory_get_usage();
-        if ($mem > $options['memory.threshold']) {
-            error_log("Warning: Memory use {$mem} above threshold {$options['memory.threshold']}");
-        }
-    });
-    call_user_func_array($main, $args);
-}
+NoccyLabs\LogPipe\Application\LogPipeApplication::main();

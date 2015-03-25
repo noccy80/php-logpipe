@@ -86,6 +86,8 @@ class LogDumper
 
             $ch = $input->readChar();
             switch ($ch) {
+                case 'q':
+                    break(2);
                 case ':':
                     $line = $input->readLine(":");
                     $this->evalDumperCommand($line);
@@ -139,11 +141,20 @@ class LogDumper
 
     public function setOption($key, $value)
     {
+        switch ($key) {
+            case 'buffer.size':
+                $this->buffer = new AddressableFifoBuffer($value);
+                break;
+        }
         $this->options[$key] = $value;
     }
 
     public function getOption($key)
     {
+        if (!array_key_exists($key, $this->options)) {
+            $this->output->write("<error>No such option: {$key}</error>");
+            return;
+        }
         return $this->options[$key];
     }
 
@@ -154,6 +165,10 @@ class LogDumper
                 $this->dumpOption($key);
             }
         } else {
+            if (!array_key_exists($key, $this->options)) {
+                $this->output->write("<error>No such option: {$key}</error>");
+                return;
+            }
             $value = $this->options[$key];
             $this->output->write("<options=bold>{$key}</options=bold> = '{$value}'\n");
         }

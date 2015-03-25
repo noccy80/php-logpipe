@@ -38,6 +38,11 @@ class ConsoleMessage implements MessageInterface {
         return $this->message['message'];
     }
 
+    public function getText()
+    {
+        return $this->getMessage();
+    }
+
     public function getClientId()
     {
         return $this->message["_client_id"];

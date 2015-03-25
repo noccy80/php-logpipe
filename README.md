@@ -49,6 +49,15 @@ press slash (`/`) and start typing. The input will be parsed as a regular expres
 
     /exception/i  <- will perform a case independent match
 
+### Entering commands
+
+Currently the only supported command is `set`, but you can go ahead and invoke it by pressing colon (`:`) while in the
+dumper:
+
+    :set                  <- list all settings
+    :set buffer.size      <- show the value of buffer.size
+    :set buffer.size 999  <- set buffer size to 999
+
 ## Using with Symfony
 
 To use LogPipe with Symfony you only need to register the handler as a service so that it can be used with Monolog.
@@ -70,10 +79,6 @@ LogPipe logger.
                 type:   service
                 id:     logpipe.handler
 
-To use a custom serializer, provide it with the endpoint URI: `udp:127.0.0.1:6999:serializer=msgpack` etc.
-As the policy is *fail and forget*, you will not receive any errors if the serializer is not supported. Calling
-on a non-existing serializer will throw an exception.
-
 ## Using elsewhere
 
 LogPipe can be set up to automatically log exceptions and errors:
@@ -89,23 +94,26 @@ You can also write events manually: **(not implemented)**
     $handler->debug("This is a debug message!");
     $handler->warning("Danger! Danger!");
 
-
 ## Transports
 
- -  **UDP** (`udp:<host>:<port>`)
-    The default transport is over UDP port 6999. Messages sent over UDP are tagged with a 6-byte header specifying size
-    and crc32 of the payload. Messages are serialized, transmitted, and once fully received and with a valid checksum
-    unserialized and parsed. Note that due to how UDP works, if you spawn another dumper on the same port, the first one
-    will stop receiving data without indicating an error.
- -  **TCP** (`tcp:<host>:<port>`)
-    The TCP transport works kinda like the UDP transport. However, since TCP is connection-oriented some complications
-    may occur if no dumper is available. This needs more testing. It should however be able to handle bigger messages.
- -  **Pipe** (`pipe:<path>`)
-    The pipe transport is the default when no colon is found in the transport URI. Thus, `/var/run/foo.sock` will be
-    internally translated to `pipe:/var/run/foo.sock`. The *listen()* method will create the named pipe and start
-    listening for connections. Only use the pipe transport if you really have to. Concurrency might be an issue, as well 
-    as some unexpected blocking issues.
+### UDP (`udp:<host>:<port>`)
 
+The default transport is over UDP port 6999. Messages sent over UDP are tagged with a 6-byte header specifying size
+and crc32 of the payload. Messages are serialized, transmitted, and once fully received and with a valid checksum
+unserialized and parsed. Note that due to how UDP works, if you spawn another dumper on the same port, the first one
+will stop receiving data without indicating an error.
+
+### TCP (`tcp:<host>:<port>`)
+
+The TCP transport works kinda like the UDP transport. However, since TCP is connection-oriented some complications
+may occur if no dumper is available. This needs more testing. It should however be able to handle bigger messages.
+
+### Pipe (`pipe:<path>`)
+
+The pipe transport is the default when no colon is found in the transport URI. Thus, `/var/run/foo.sock` will be
+internally translated to `pipe:/var/run/foo.sock`. The *listen()* method will create the named pipe and start
+listening for connections. Only use the pipe transport if you really have to. Concurrency might be an issue, as well 
+as some unexpected blocking issues.
 
 ## Serializers
 
@@ -113,10 +121,13 @@ What serializer is used is set in the sending transport. The serialization forma
 (together with checksum, size and flags) to that the appropriate unserializer can be invoked. The supported
 serializers are:
 
- -  **PHP Serializer** (`php`) - The built-in PHP serializer
- -  **Json** (`json`) - Uses Json to serialize the data
- -  **MsgPack** (`msgpack`) - Like binary json, should result in smaller messages.
+ -  `php`: The built-in PHP serializer
+ -  `json`: Uses Json to serialize the data
+ -  `msgpack`: Like binary json, should result in smaller messages.
 
+To use a custom serializer, provide it with the endpoint URI: `udp:127.0.0.1:6999:serializer=msgpack` etc.
+As the policy is *fail and forget*, you will not receive any errors if the serializer is not supported. Calling
+on a non-existing serializer will throw an exception.
 
 ## Frequently Asked Questions (FAQ)
 
@@ -149,6 +160,7 @@ misbehaving due to an auxillary logger.
 ## Version history
 
     0.2.1   [+] Implemented fifo-buffer to hold last N requests for quick searching.
+            [+] Both Escape and Q can now be used to exit the dumper.
     0.2     [*] Data encapsulation stuff handled by PipeV1Protocol class.
             [*] Pipe transport considered fully functional.
     0.1.5   [+] Added more unit tests.
