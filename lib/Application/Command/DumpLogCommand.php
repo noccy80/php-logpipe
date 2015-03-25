@@ -33,8 +33,9 @@ class DumpLogCommand extends AbstractCommand
         $this->addOption("channels", "c", InputOption::VALUE_REQUIRED, "The channels to include (comma-separated)");
         $this->addOption("exclude", "x", InputOption::VALUE_REQUIRED, "The channels to exclude (comma-separated)");
         $this->addOption("no-squelch", "s", InputOption::VALUE_NONE, "Don't show the number of squelched messages");
-        $this->addOption("output", "o", InputOption::VALUE_REQUIRED, "Write the complete log to file");
-        $this->addOption("tee", "t", InputOption::VALUE_REQUIRED, "Write the filtered log to file");
+        $this->addOption("config", "C", InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY, "Configuration to pass on to the log dumper");
+        //$this->addOption("output", "o", InputOption::VALUE_REQUIRED, "Write the complete log to file");
+        //$this->addOption("tee", "t", InputOption::VALUE_REQUIRED, "Write the filtered log to file");
         $this->setHelp(self::HELP);
     }
 
@@ -53,8 +54,19 @@ class DumpLogCommand extends AbstractCommand
 
         $dumper = new ConsoleDumper($this->output);
 
+        $config = $this->input->getOption("config");
+        $config_opts = [];
+        foreach ($config as $config_str) {
+            if (strpos($config_str,"=")===false) {
+                $key=$config_str;
+                $value=1;
+            } else {
+                list($key,$value) = explode("=",$config_str,2);
+            }
+            $config_opts[$key] = $value;
+        }
 
-        $log_dumper = new LogDumper();
+        $log_dumper = new LogDumper($config_opts);
         $log_dumper->setTransport($transport);
         $log_dumper->setDumper($dumper);
         $log_dumper->setFilter($filter);
@@ -62,7 +74,7 @@ class DumpLogCommand extends AbstractCommand
         $log_dumper->run();
 
 
-        $this->output->writeln("\nGot SIGINT, Exiting");
+        $this->output->writeln("\nExiting.");
 
     }
 

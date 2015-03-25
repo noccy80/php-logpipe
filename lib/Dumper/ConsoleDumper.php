@@ -24,6 +24,7 @@ class ConsoleDumper
         $client     = $message->getClientId();
 
         $output = $this->formatter->format($message);
+        $output = str_replace("\n", "\n".str_repeat(" ",strlen($client)+1),$output);
 
         $this->output->writeln(
             sprintf("%s %s", $client, $output)

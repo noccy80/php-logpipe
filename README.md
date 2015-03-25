@@ -41,6 +41,13 @@ To save the log while viewing it, try using tee:
 
     $ bin/logpipe dump --no-ansi | tee messages.log
 
+### Searching the buffer
+
+The last bunch of messages (normally 1000, but can be set with `-Cbuffer.size=N` on the command line or `:set buffer.size N`
+while in the dumper) are stored in a buffer. You can at any time search this buffer and dump any matches. To do this, just
+press slash (`/`) and start typing. The input will be parsed as a regular expression, so you can add modifiers to the end:
+
+    /exception/i  <- will perform a case independent match
 
 ## Using with Symfony
 
@@ -77,7 +84,7 @@ LogPipe can be set up to automatically log exceptions and errors:
     $handler->setExceptionReporting(true);
     $handler->setErrorReporting(true);
 
-You can also write events manually:
+You can also write events manually: **(not implemented)**
 
     $handler->debug("This is a debug message!");
     $handler->warning("Danger! Danger!");
@@ -141,6 +148,7 @@ misbehaving due to an auxillary logger.
 
 ## Version history
 
+    0.2.1   [+] Implemented fifo-buffer to hold last N requests for quick searching.
     0.2     [*] Data encapsulation stuff handled by PipeV1Protocol class.
             [*] Pipe transport considered fully functional.
     0.1.5   [+] Added more unit tests.

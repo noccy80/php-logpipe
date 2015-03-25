@@ -29,15 +29,19 @@ class Formatter {
             $style = call_user_func($style, $message);
         }
         $ret = null;
+        $output = [];
+        $text = $message->getMessage();
         if (strpos($style,"|")!==false) {
             list ($pre, $post) = explode("|", $style);
-            $output = $pre . $message->getMessage() . $post;
+            foreach (explode("\n", $text) as $line)
+                $output[] = $pre . $line . $post;
         } elseif (preg_match("/^<(.*)>$/", $style, $ret)) {
-            $output = sprintf("<%s>%s</%s>", $ret[1], $message->getMessage(), $ret[1]);
+            foreach (explode("\n", $text) as $line)
+                $output[] = sprintf("<%s>%s</%s>", $ret[1], $line, $ret[1]);
         } else {
-            $output = $message->getMessage();
+            return $text;
         }
-        return $output;
+        return join("\n",$output);
     }
 
 }
