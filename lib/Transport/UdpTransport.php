@@ -31,7 +31,7 @@ class UdpTransport extends TransportAbstract
     {
         if (!$this->stream) { return; }
         try {
-            $data = $this->pack($message);
+            $data = $this->protocol->pack($message);
             @fwrite($this->stream, $data);
         } catch (\Exception $e) {
             // Do nothing with this message if serialization failed.
@@ -47,7 +47,7 @@ class UdpTransport extends TransportAbstract
         $read = fread($this->stream, 65535);
 
         $buffer .= $read;
-        return $this->unpack($buffer);
+        return $this->protocol->unpack($buffer);
     }
 
     public function listen()

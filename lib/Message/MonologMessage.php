@@ -68,6 +68,11 @@ class MonologMessage implements MessageInterface {
             : 0;
     }
 
+    public function getText()
+    {
+        return $this->record['message'];
+    }
+
     public function getMessage()
     {
         return rtrim($this->record['formatted']);

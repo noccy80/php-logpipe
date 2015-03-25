@@ -141,11 +141,16 @@ misbehaving due to an auxillary logger.
 
 ## Version history
 
-    0.1.5   - More unit tests, serializers enabled.
-    0.1.3   - Added serializers
-            - Updated message- and transport structure
-            - Improved console commands
-    0.1.2   - TCP transport considered functional
-            - Added support for using the envvar APP_ID, or the define() APP_ID to specify
-              the prefix to use. Setting neither will use the hostname as app id.
-    0.1     - Initial release
+    0.2     [*] Data encapsulation stuff handled by PipeV1Protocol class.
+            [*] Pipe transport considered fully functional.
+    0.1.5   [+] Added more unit tests.
+    0.1.3   [+] Added serializers.
+            [!] Updated message- and transport structure.
+            [!] Improved console commands.
+    0.1.2   [*] TCP transport considered functional.
+            [+] Added support for using the envvar APP_ID, or the define() APP_ID to specify
+                the prefix to use. Setting neither will use the hostname as app id.
+    0.1     [*] Initial release.
+
+### Roadmap
+

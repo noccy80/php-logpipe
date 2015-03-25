@@ -20,7 +20,8 @@ class TransportFactory
         // Scenario 2: matching class, like 'udp:udp.parameters'
         $type_class = "NoccyLabs\\LogPipe\\Transport\\" . ucwords($type) . "Transport";
         if (class_exists($type_class)) {
-            return new $type_class($resource);
+            $inst = new $type_class($resource);
+            return $inst;
         }
 
         throw new \InvalidArgumentException("Unable to create a transport from URI '{$uri}'");

@@ -12,13 +12,22 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use NoccyLabs\LogPipe\Transport\TransportFactory;
 use NoccyLabs\LogPipe\Dumper\ConsoleDumper;
+use NoccyLabs\LogPipe\Application\LogDumper\LogDumper;
 
-class DumpCommand extends AbstractCommand
+class DumpLogCommand extends AbstractCommand
 {
+    protected $cmdname;
+
+    public function __construct($cmdname="dump:log")
+    {
+        $this->cmdname = $cmdname;
+        parent::__construct();
+    }
+
     protected function configure()
     {
-        $this->setName("dump");
-        $this->setDescription("Start listening for log events");
+        $this->setName($this->cmdname);
+        $this->setDescription("Listen for and start dumping incoming events");
         $this->addArgument("endpoint", InputArgument::OPTIONAL, "The endpoint or pipe to dump", "udp:127.0.0.1:6999");
         $this->addOption("level", "l", InputOption::VALUE_REQUIRED, "Minimum level for a log event to be displayed", 100);
         $this->addOption("channels", "c", InputOption::VALUE_REQUIRED, "The channels to include (comma-separated)");
@@ -44,29 +53,14 @@ class DumpCommand extends AbstractCommand
 
         $dumper = new ConsoleDumper($this->output);
 
-        $break = false;
-        pcntl_signal(SIGINT, function () use (&$break) { $break = true; });
-        declare(ticks=5);
 
-        $squelched = 0;
-        while (!$break) {
-            $msg = $transport->receive();
-            if ($msg) {
-                if (($out = $filter->filterMessage($msg))) {
-                    if (($squelched > 0) && ($squelch_info)) {
-                        $this->output->writeln("\r<fg=black;bg=yellow> {$squelched}</fg=black;bg=yellow><fg=black;bg=yellow;options=bold> messages squelched </fg=black;bg=yellow;options=bold>");
-                        $squelched = 0;
-                    }
-                    $dumper->dump($out);
-                } else {
-                    $squelched++;
-                    if ($squelch_info) {
-                        $this->output->write("\r<fg=black;bg=yellow> {$squelched} </fg=black;bg=yellow>");
-                    }
-                }
-            }
-            usleep(1000);
-        }
+        $log_dumper = new LogDumper();
+        $log_dumper->setTransport($transport);
+        $log_dumper->setDumper($dumper);
+        $log_dumper->setFilter($filter);
+        $log_dumper->setOutput($this->output);
+        $log_dumper->run();
+
 
         $this->output->writeln("\nGot SIGINT, Exiting");
 

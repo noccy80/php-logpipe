@@ -4,6 +4,7 @@ namespace NoccyLabs\LogPipe\Transport;
 
 use NoccyLabs\LogPipe\Message\MessageInterface;
 use NoccyLabs\LogPipe\Serializer\SerializerFactory;
+use NoccyLabs\LogPipe\Protocol\PipeV1Protocol;
 
 abstract class TransportAbstract implements TransportInterface
 {
@@ -13,9 +14,9 @@ abstract class TransportAbstract implements TransportInterface
 
     protected $stream;
 
-    protected $serializer;
-
     protected $options;
+
+    protected $protocol;
 
     public function __construct($options)
     {
@@ -24,7 +25,17 @@ abstract class TransportAbstract implements TransportInterface
 
         $this->options = (array)$parsed;
 
-        $this->serializer = SerializerFactory::getSerializerForName($this->getOption('serializer', 'php'));
+        $serializer = SerializerFactory::getSerializerForName($this->getOption('serializer', 'php'));
+
+        $proto = $this->getOption('protocol', 1);
+        switch ($proto) {
+            case 1:
+                $this->protocol   = new PipeV1Protocol($serializer);
+                break;
+            default:
+                throw new \Exception("Invalid/unsupported protocol requested: {$proto}");
+        }
+
     }
 
     public function getOption($name, $default=null)
@@ -32,33 +43,4 @@ abstract class TransportAbstract implements TransportInterface
         return array_key_exists($name, $this->options) ? $this->options[$name] : $default;
     }
 
-    public function pack(MessageInterface $message)
-    {
-        try {
-            $msg = $this->serializer->serialize($message);
-            $header = pack("vV", strlen($msg), crc32($msg));
-        } catch (\Exception $e) { }
-        return $header.$msg;
-    }
-
-    public function unpack(&$buffer)
-    {
-        if (strlen($buffer) > 6) {
-            $header = unpack("vsize/Vcrc32", substr($buffer, 0, 6));
-            if ((strlen($buffer) < $header['size'] - 6)) {
-                return NULL;
-            }
-            $data = substr($buffer, 6, $header['size']);
-            $buffer = substr($buffer, $header['size']+6);
-            if (crc32($data) != $header['crc32']) {
-                $buffer = null;
-                error_log("Warning: Message with invalid crc32 encountered.");
-                return NULL;
-            }
-
-            $rcv = $this->serializer->unserialize($data);
-
-            return $rcv;
-        }
-    }
 }

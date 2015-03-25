@@ -23,4 +23,11 @@ class FifoTest extends \PhpUnit_Framework_TestCase
 
         $this->assertFalse(file_exists("/tmp/test.pipe"));
     }
+
+    public function testReadingFromClosedFifo()
+    {
+        $fifo = new Fifo("/tmp/test.pipe");
+        $data = $fifo->read(1024);
+        $this->assertNull($data);
+    }
 }

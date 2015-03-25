@@ -37,7 +37,7 @@ class TcpTransport extends TransportAbstract {
     {
         if (!$this->stream) { return; }
         try {
-            $data = $this->pack($message);
+            $data = $this->protocol->pack($message);
             @fwrite($this->stream, $data);
         } catch (\Exception $e) {
             // Do nothing with this message if serialization failed.
@@ -81,7 +81,7 @@ class TcpTransport extends TransportAbstract {
     
                     //printf("Buffer %s len=%d\n", $sh, strlen($this->buffer[$sh]));
 
-                    while (($msg = $this->unpack($this->buffer[$sh]))) {
+                    while (($msg = $this->protocol->unpack($this->buffer[$sh]))) {
                     /*while (strlen($this->buffer[$sh]) > 6) {
                         $header = unpack("vsize/Vcrc32", substr($this->buffer[$sh], 0, 6));
                         if ((strlen($this->buffer[$sh]) < $header['size'] - 6)) {

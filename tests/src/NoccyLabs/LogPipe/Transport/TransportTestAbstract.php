@@ -50,6 +50,30 @@ abstract class TransportTestAbstract extends \PhpUnit_Framework_TestCase
         }
     }
 
+    public function testReopeningListenerAsListener()
+    {
+        $this->server->listen();
+        $this->server->listen();
+    }
+
+    public function testReopeningListenerAsClient()
+    {
+        $this->server->listen();
+        $this->server->connect();
+    }
+
+    public function testReopeningClientAsClient()
+    {
+        $this->client->connect();
+        $this->client->connect();
+    }
+
+    public function testReopeningClientAsServer()
+    {
+        $this->client->connect();
+        $this->client->listen();
+    }
+
     /**
      * @dataProvider getMessages
      */

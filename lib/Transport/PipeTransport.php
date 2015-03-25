@@ -31,10 +31,11 @@ class PipeTransport extends TransportAbstract
      */
     public function send(MessageInterface $message)
     {
-        if (!$this->stream) { return; }
+        if (!$this->fifo) { return false; }
         try {
-            $data = $this->pack($message);
+            $data = $this->protocol->pack($message);
             $this->fifo->write($data);
+            return true;
         } catch (\Exception $e) {
             // Do nothing with this message if serialization failed.
         }
@@ -55,7 +56,7 @@ class PipeTransport extends TransportAbstract
 
         $buffer .= $read;
 
-        return $this->unpack($buffer);
+        return $this->protocol->unpack($buffer);
     }
 
 
