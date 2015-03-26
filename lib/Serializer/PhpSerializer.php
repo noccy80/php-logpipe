@@ -28,10 +28,9 @@ class PhpSerializer implements SerializerInterface
      */
     public function serialize(MessageInterface $message)
     {
-        try {
-            $data = @serialize($message);
-        } catch (\Exception $e) {
-            throw new SerializerException("Unable to serialize data", 0, $e);
+        $data = @serialize($message);
+        if (!$data) {
+            throw new SerializerException("Unable to serialize data");
         }
         return $data;
     }
@@ -41,10 +40,9 @@ class PhpSerializer implements SerializerInterface
      */
     public function unserialize($data)
     {
-        try {
-            $data = @unserialize($data);
-        } catch (\Exception $e) {
-            throw new SerializerException("Unable to serialize data", 0, $e);
+        $data = @unserialize($data);
+        if (!$data) {
+            throw new SerializerException("Unable to unserialize data");
         }
         return $data;
     }

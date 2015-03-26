@@ -31,6 +31,14 @@ abstract class SerializerTestAbstract extends \PhpUnit_Framework_TestCase
         $this->assertEquals($message, $unserialized);
     }
 
+    /**
+     * @expectedException NoccyLabs\LogPipe\Exception\SerializerException
+     */
+    public function testUnserializingInvalidDataThrowsException()
+    {
+        $this->getSerializer()->unserialize("invalid-data");
+    }
+
     public function getMessages()
     {
         $messages = [];
@@ -59,4 +67,9 @@ abstract class SerializerTestAbstract extends \PhpUnit_Framework_TestCase
 
         return $messages;
     }
+}
+
+class Unserializable {
+    private function __sleep() {}
+    private function __wakeup() {}
 }

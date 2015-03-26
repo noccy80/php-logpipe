@@ -74,6 +74,7 @@ class LogDumper
                         $this->output->writeln("\r<fg=black;bg=yellow> {$squelched}</fg=black;bg=yellow><fg=black;bg=yellow;options=bold> messages squelched </fg=black;bg=yellow;options=bold>");
                         $squelched = 0;
                     }
+                    $this->output->write("\r\e[J");
                     $this->dumper->dump($out);
                 } else {
                     $squelched++;

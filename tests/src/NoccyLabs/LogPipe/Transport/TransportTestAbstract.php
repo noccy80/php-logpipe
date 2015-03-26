@@ -31,6 +31,24 @@ abstract class TransportTestAbstract extends \PhpUnit_Framework_TestCase
 
     abstract public function getEndpoint();
 
+    /**
+     * @expectedException \Exception
+     */
+    public function testSettingUpWithInvalidSerializer()
+    {
+        $endpoint = $this->getEndpoint();
+        $ep = TransportFactory::create($endpoint.':serializer=bar');
+    }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testSettingUpWithInvalidProtocol()
+    {
+        $endpoint = $this->getEndpoint();
+        $ep = TransportFactory::create($endpoint.':protocol=42');
+    }
+
     public function testThatEndpointsCouldBeCreated()
     {
         $this->assertNotNull($this->server);

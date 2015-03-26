@@ -29,10 +29,9 @@ class JsonSerializer implements SerializerInterface
     public function serialize(MessageInterface $message)
     {
         $raw = [ get_class($message), $message->getData() ];
-        try {
-            $data = \json_encode($raw);
-        } catch (\Exception $e) {
-            throw new SerializerException("Unable to serialize data", 0, $e);
+        $data = @\json_encode($raw);
+        if (!$data) {
+            throw new SerializerException("Unable to serialize data");
         }
         return $data;
     }
@@ -42,10 +41,9 @@ class JsonSerializer implements SerializerInterface
      */
     public function unserialize($data)
     {
-        try {
-            $data = (array)\json_decode($data);
-        } catch (\Exception $e) {
-            throw new SerializerException("Unable to unserialize data", 0, $e);
+        $data = (array)@\json_decode($data);
+        if (!$data) {
+            throw new SerializerException("Unable to unserialize data");
         }
         $class = $data[0];
         $inst = new $class();

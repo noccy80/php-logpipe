@@ -4,6 +4,7 @@
 namespace NoccyLabs\LogPipe\Dumper;
 
 use NoccyLabs\LogPipe\Message\MonologMessage;
+use NoccyLabs\LogPipe\Message\ConsoleMessage;
 use NoccyLabs\LogPipe\Dumper\Formatter;
 
 class FormatterTest extends \PHPUnit_Framework_TestCase
@@ -30,8 +31,26 @@ class FormatterTest extends \PHPUnit_Framework_TestCase
                 )),
                 'extra' => array (),
                 'formatted' => '[2015-03-07 04:20:39] main.EMERGENCY: Oh my god! [] []'
-                )),
+            )),
                 "<b>", "<b>[2015-03-07 04:20:39] main.EMERGENCY: Oh my god! [] []</b>"
+            ],
+            [ new ConsoleMessage(array(
+                'message' => 'MESSAGE',
+                'level' => 100
+            )),
+                "pre|post", "preMESSAGEpost"
+            ],
+            [ new ConsoleMessage(array(
+                'message' => 'MESSAGE',
+                'level' => 100
+            )),
+                function ($s) { return "foo|bar"; }, "fooMESSAGEbar"
+            ],
+            [ new ConsoleMessage(array(
+                'message' => 'MESSAGE',
+                'level' => 100
+            )),
+                NULL, "MESSAGE"
             ]
         ];
 
@@ -42,7 +61,7 @@ class FormatterTest extends \PHPUnit_Framework_TestCase
      * @param $message
      * @dataProvider getMessages
      */
-    public function testFormatWithHtmlStyleTags($message, $style, $expect)
+    public function testFormatter($message, $style, $expect)
     {
 
         $formatter = new Formatter();
