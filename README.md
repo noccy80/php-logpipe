@@ -24,7 +24,7 @@ the project.
 
 ## Using on command line
 
-To start (listening for and) dumping events on the default port (`udp:127.0.0.1:6999`) just use the **dump** command:
+To start (listening for and) dumping events on the default port (`tcp:127.0.0.1:6601`) just use the **dump** command:
 
     $ bin/logpipe dump
 
@@ -162,6 +162,7 @@ misbehaving due to an auxillary logger.
 
     0.2.1   [+] Implemented fifo-buffer to hold last N requests for quick searching.
             [+] Both Escape and Q can now be used to exit the dumper.
+            [!] TCP is now the default transport (tcp:127.0.0.1:6601)
     0.2     [*] Data encapsulation stuff handled by PipeV1Protocol class.
             [*] Pipe transport considered fully functional.
     0.1.5   [+] Added more unit tests.
