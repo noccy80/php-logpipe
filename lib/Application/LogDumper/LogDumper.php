@@ -24,8 +24,10 @@ class LogDumper
     protected $options = [
         "buffer.size"   => 1000,
         "output.wrap"   => 1,
-        "output.title"  => 1
+        "output.title"  => 0
     ];
+
+    protected $interactive = false;
 
     public function __construct($options)
     {
@@ -53,10 +55,20 @@ class LogDumper
         $this->output = $output;
     }
 
+    public function setInteractive($state)
+    {
+        $this->interactive = (bool)$state;
+    }
+
     public function run()
     {
         $signal = new SignalListener(SIGINT);
-        $input  = new CharacterInput(true);
+
+        if ($this->interactive) {
+            $input  = new CharacterInput(true);
+        } else {
+            $input = NULL;
+        }
 
         declare(ticks=5);
 
@@ -84,32 +96,32 @@ class LogDumper
                 }
                 if ($this->getOption("output.title")) { $this->updateTitle(); }
             }
-
-            $ch = $input->readChar();
-            switch ($ch) {
-                case 'q':
-                    break(2);
-                case ':':
-                    $line = $input->readLine(":");
-                    $this->evalDumperCommand($line);
-                    break;
-                case '/':
-                    $find = $input->readLine("/");
-                    if ($find) {
-                        if (strpos($find,"/") === false) {
-                            $find = "/{$find}/";
-                        } elseif ($find[0] != "/") {
-                            $find = "/{$find}";
+            if ($input) {
+                $ch = $input->readChar();
+                switch ($ch) {
+                    case 'q':
+                        break(2);
+                    case ':':
+                        $line = $input->readLine(":");
+                        $this->evalDumperCommand($line);
+                        break;
+                    case '/':
+                        $find = $input->readLine("/");
+                        if ($find) {
+                            if (strpos($find,"/") === false) {
+                                $find = "/{$find}/";
+                            } elseif ($find[0] != "/") {
+                                $find = "/{$find}";
+                            }
+                            $this->output->writeln("<info>preg_match(</info><comment>{$find}</comment></info>)</info>:");
+                            $items = $this->buffer->match($find);
+                            foreach ($items as $item) { $this->dumper->dump($item); }
                         }
-                        $this->output->writeln("<info>preg_match(</info><comment>{$find}</comment></info>)</info>:");
-                        $items = $this->buffer->match($find);
-                        foreach ($items as $item) { $this->dumper->dump($item); }
-                    }
-                    break;
-                case chr(27):
-                    break(2);
+                        break;
+                    case chr(27):
+                        break(2);
+                }
             }
-
             usleep(100);
         }
     }

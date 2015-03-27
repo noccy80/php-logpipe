@@ -22,7 +22,7 @@ class LogTestCommand extends AbstractCommand
     {
         $this->setName($this->cmdname);
         $this->setDescription("Sends a few test events");
-        $this->addArgument("endpoint", InputArgument::OPTIONAL, "The endpoint or pipe to dump", "udp:127.0.0.1:6999");
+        $this->addArgument("endpoint", InputArgument::OPTIONAL, "The endpoint or pipe to dump", DEFAULT_ENDPOINT);
     }
 
 

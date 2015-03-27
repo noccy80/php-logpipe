@@ -6,7 +6,8 @@
         "psr/log": "1.*",
         "monolog/monolog": "~1.0",
         "symfony/yaml": "~2.6",
-        "symfony/dependency-injection": "~2.6"
+        "symfony/dependency-injection": "~2.6",
+        "symfony/event-dispatcher": "~2.6"
     },
     "autoload": {
         "files": [ "lib/globals.php" ],

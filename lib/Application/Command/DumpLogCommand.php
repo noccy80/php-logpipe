@@ -28,12 +28,13 @@ class DumpLogCommand extends AbstractCommand
     {
         $this->setName($this->cmdname);
         $this->setDescription("Listen for and start dumping incoming events");
-        $this->addArgument("endpoint", InputArgument::OPTIONAL, "The endpoint or pipe to dump", "udp:127.0.0.1:6999");
+        $this->addArgument("endpoint", InputArgument::OPTIONAL, "The endpoint or pipe to dump", DEFAULT_ENDPOINT);
         $this->addOption("level", "l", InputOption::VALUE_REQUIRED, "Minimum level for a log event to be displayed", 100);
         $this->addOption("channels", "c", InputOption::VALUE_REQUIRED, "The channels to include (comma-separated)");
         $this->addOption("exclude", "x", InputOption::VALUE_REQUIRED, "The channels to exclude (comma-separated)");
         $this->addOption("no-squelch", "s", InputOption::VALUE_NONE, "Don't show the number of squelched messages");
         $this->addOption("config", "C", InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY, "Configuration to pass on to the log dumper");
+        $this->addOption("interactive", "i", InputOption::VALUE_NONE, "Allow searching and executing commands while dumping");
         //$this->addOption("output", "o", InputOption::VALUE_REQUIRED, "Write the complete log to file");
         //$this->addOption("tee", "t", InputOption::VALUE_REQUIRED, "Write the filtered log to file");
         $this->setHelp(self::HELP);
@@ -71,6 +72,7 @@ class DumpLogCommand extends AbstractCommand
         $log_dumper->setDumper($dumper);
         $log_dumper->setFilter($filter);
         $log_dumper->setOutput($this->output);
+        $log_dumper->setInteractive($this->input->getOption("interactive"));
         $log_dumper->run();
 
 

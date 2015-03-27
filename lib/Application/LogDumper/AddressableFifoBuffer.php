@@ -43,7 +43,7 @@ class AddressableFifoBuffer implements \Countable, \ArrayAccess
     {
         array_push($this->buffer, $data);
         while (count($this->buffer) > $this->size) {
-            array_unshift($this->buffer);
+            array_shift($this->buffer);
         }
         $this->total++;
     }

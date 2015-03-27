@@ -49,14 +49,15 @@ press slash (`/`) and start typing. The input will be parsed as a regular expres
 
     /exception/i  <- will perform a case independent match
 
-### Entering commands
-
 Currently the only supported command is `set`, but you can go ahead and invoke it by pressing colon (`:`) while in the
 dumper:
 
     :set                  <- list all settings
     :set buffer.size      <- show the value of buffer.size
     :set buffer.size 999  <- set buffer size to 999
+
+Note: For searching and commands to work, you need to add `-i` or `--interactive` to the dump command. This is as the
+Stty solution used to implement a slightly more awesome readline functionality might not work on other platforms.
 
 ## Using with Symfony
 

@@ -32,7 +32,7 @@ class LogWriteCommand extends AbstractCommand
         $this->addOption("alert", "A", InputOption::VALUE_NONE, "Use message level alert");
         $this->addOption("emergency", "F", InputOption::VALUE_NONE, "Use message level emergency");
         $this->addArgument("message", InputArgument::REQUIRED, "The message to write");
-        $this->addArgument("endpoint", InputArgument::OPTIONAL, "The endpoint to write to", "udp:127.0.0.1:6999");
+        $this->addArgument("endpoint", InputArgument::OPTIONAL, "The endpoint to write to", DEFAULT_ENDPOINT);
         $this->setHelp(self::HELP_TEXT);
     }
 

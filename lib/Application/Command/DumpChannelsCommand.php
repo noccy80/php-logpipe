@@ -11,13 +11,13 @@ use Symfony\Component\Console\Output\OutputInterface;
 use NoccyLabs\LogPipe\Transport\TransportFactory;
 use NoccyLabs\LogPipe\Dumper\ConsoleDumper;
 
-class ChannelsCommand extends AbstractCommand
+class DumpChannelsCommand extends AbstractCommand
 {
     protected function configure()
     {
-        $this->setName("channels");
+        $this->setName("dump:channels");
         $this->setDescription("Dump all unique channel names from an endpoint");
-        $this->addArgument("endpoint", InputArgument::OPTIONAL, "The endpoint or pipe to dump", "udp:127.0.0.1:6999");
+        $this->addArgument("endpoint", InputArgument::OPTIONAL, "The endpoint or pipe to dump", DEFAULT_ENDPOINT);
         $this->setHelp(self::HELP);
     }
 
