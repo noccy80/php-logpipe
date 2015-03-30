@@ -21,6 +21,8 @@ class LogDumper
 
     protected $buffer;
 
+    protected $squelch_info = true;
+
     protected $options = [
         "buffer.size"   => 1000,
         "output.wrap"   => 1,
@@ -55,6 +57,11 @@ class LogDumper
         $this->output = $output;
     }
 
+    public function setShowSquelchInfo($show)
+    {
+        $this->squelch_info = $show;
+    }
+
     public function setInteractive($state)
     {
         $this->interactive = (bool)$state;
@@ -82,7 +89,7 @@ class LogDumper
             if ($msg) {
                 $this->buffer->push($msg);
                 if (($out = $this->filter->filterMessage($msg))) {
-                    if (($squelched > 0) && ($squelch_info)) {
+                    if (($squelched > 0) && ($this->squelch_info)) {
                         $this->output->writeln("\r<fg=black;bg=yellow> {$squelched}</fg=black;bg=yellow><fg=black;bg=yellow;options=bold> messages squelched </fg=black;bg=yellow;options=bold>");
                         $squelched = 0;
                     }
@@ -90,7 +97,7 @@ class LogDumper
                     $this->dumper->dump($out);
                 } else {
                     $squelched++;
-                    if ($squelch_info) {
+                    if ($this->squelch_info) {
                         $this->output->write("\r<fg=black;bg=yellow> {$squelched} </fg=black;bg=yellow>");
                     }
                 }

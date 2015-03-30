@@ -73,6 +73,7 @@ class DumpLogCommand extends AbstractCommand
         $log_dumper->setFilter($filter);
         $log_dumper->setOutput($this->output);
         $log_dumper->setInteractive($this->input->getOption("interactive"));
+        $log_dumper->setShowSquelchInfo(!$this->input->getOption("no-squelch"));
         $log_dumper->run();
 
 
