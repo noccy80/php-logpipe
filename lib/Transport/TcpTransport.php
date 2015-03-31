@@ -35,7 +35,10 @@ class TcpTransport extends TransportAbstract {
 
     public function send(MessageInterface $message)
     {
-        if (!$this->stream) { return; }
+        // Bail if we don't have an open stream
+        if (!$this->stream) {
+            return;
+        }
         try {
             $data = $this->protocol->pack($message);
             @fwrite($this->stream, $data);
@@ -48,6 +51,11 @@ class TcpTransport extends TransportAbstract {
     {
         static $buffer;
         if (!is_array($buffer)) { $buffer = []; }
+
+        // Bail out if we don't have an open stream
+        if (!$this->stream) {
+            return;
+        }
 
         $read = [ $this->stream ];
         $read = array_merge($read, $this->clients);

@@ -42,6 +42,8 @@ class UdpTransport extends TransportAbstract
     {
         static $buffer;
 
+        if (!$this->stream) { return; }
+
         stream_set_blocking($this->stream, $blocking);
 
         $read = fread($this->stream, 65535);
