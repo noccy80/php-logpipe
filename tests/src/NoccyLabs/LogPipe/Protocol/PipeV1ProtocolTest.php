@@ -52,7 +52,23 @@ class PipeV1ProtocolTest extends ProtocolTestAbstract
         $this->assertEmpty($extr3);
         
     }
-    
+
+    /**
+     * @dataProvider getSerializerData
+     */
+    public function testHugeMessagePayloadWithSerializer($serializer)
+    {
+        $ser = SerializerFactory::getSerializerForName($serializer);
+        $proto = $this->getProtocol($ser);
+
+        $message = new ConsoleMessage([ "message"=>str_repeat("Hello",15000) ]);
+
+        $data = $proto->pack($message);
+        $this->assertNotNull($data);
+        $extr = $proto->unpack($data);
+        $this->assertEquals($message, $extr);
+    }
+
     public function getSerializerData()
     {
         return [

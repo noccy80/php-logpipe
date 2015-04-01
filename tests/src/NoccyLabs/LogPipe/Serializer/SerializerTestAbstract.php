@@ -65,6 +65,13 @@ abstract class SerializerTestAbstract extends \PhpUnit_Framework_TestCase
             "level" => 500
         ])];
 
+        $messages[] = [new ConsoleMessage([
+            "_client_id" => "long_message",
+            "message" => str_repeat("Hello",10000),
+            "channel" => "test",
+            "level" => 500
+        ])];
+
         return $messages;
     }
 }

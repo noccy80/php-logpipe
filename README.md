@@ -132,18 +132,6 @@ on a non-existing serializer will throw an exception.
 
 ## Frequently Asked Questions (FAQ)
 
-**Q: What does `packet with invalid checksum` mean?**
-
-This happens when using the UDP transport. TCP is connection-oriented, and thus big messages
-can be transmitted by fragmenting and reassembling the packets. UDP however, is datagram
-oriented. Thus, if two clients send messages at the same time, and one of them end up being
-fragmented you end up with invalid data.
-
-To work around this issue, LogPipe adds a header block with the expected size and crc32 of
-the data to make sure that frames are properly decoded. If the crc32 does not check out,
-the buffer is discarded and the message in question is displayed. If you get this a lot,
-try using the tcp transport.
-
 **Q: I can't see all logged messages!!!**
 
 LogPipe will fail quietly if anything goes wrong. This includes serialization of the log
@@ -160,6 +148,8 @@ misbehaving due to an auxillary logger.
 
 ## Version history
 
+    0.2.2   [!] Increased message header size to prevent large messages from creating corrupted
+                payloads.
     0.2.1   [+] Implemented fifo-buffer to hold last N requests for quick searching.
             [+] Both Escape and Q can now be used to exit the dumper.
             [!] TCP is now the default transport (tcp:127.0.0.1:6601)
