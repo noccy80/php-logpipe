@@ -1,8 +1,8 @@
 <?php
 
-namespace NoccyLabs\LogPipe\Application\LogDumper;
+namespace NoccyLabs\LogPipe\Application\Buffer;
 
-class AddressableFifoBuffer implements \Countable, \ArrayAccess
+class FifoBuffer implements \Countable, \ArrayAccess
 {
     protected $buffer = [];
 

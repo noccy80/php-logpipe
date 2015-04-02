@@ -39,7 +39,7 @@ class PipeV1Protocol implements ProtocolInterface
             $data = substr($buffer, 9, $header['size']);
             $buffer = substr($buffer, $header['size']+9);
             if (crc32($data) != $header['crc32']) {
-                //error_log("Warning: Message with invalid crc32 encountered.");
+                echo("Warning: Message with invalid crc32 encountered.\n");
                 $buffer = null;
                 return NULL;
             }
@@ -47,7 +47,8 @@ class PipeV1Protocol implements ProtocolInterface
                 $rcv = $this->serializer->unserialize($data);
                 return $rcv;
             }
-            //error_log("Warning: PipeV1Protocol can't handle protocol V{$tag}");
+            echo("Warning: PipeV1Protocol can't handle protocol V{$tag}\n");
+            return NULL;
         }
     }
 }

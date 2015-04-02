@@ -7,6 +7,7 @@ use NoccyLabs\LogPipe\Transport\TransportInterface;
 use NoccyLabs\LogPipe\Filter\FilterInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use NoccyLabs\LogPipe\Application\Console\CharacterInput;
+use NoccyLabs\LogPipe\Application\Buffer\FifoBuffer;
 
 class LogDumper
 {
@@ -34,7 +35,7 @@ class LogDumper
     public function __construct($options)
     {
         $this->options = array_merge($this->options, $options);
-        $this->buffer = new AddressableFifoBuffer($this->getOption("buffer.size"));
+        $this->buffer = new FifoBuffer($this->getOption("buffer.size"));
     }
 
     public function setTransport(TransportInterface $transport)
@@ -163,7 +164,7 @@ class LogDumper
     {
         switch ($key) {
             case 'buffer.size':
-                $this->buffer = new AddressableFifoBuffer($value);
+                $this->buffer = new FifoBuffer($value);
                 break;
         }
         $this->options[$key] = $value;

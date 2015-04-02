@@ -66,7 +66,7 @@ class CharacterInput
                 $redraw = false;
             }
             $ch = $this->readChar();
-            if ($ch) {
+            if ($ch !== null) {
                 switch ($ch) {
                     case "\e[A": // up
                         break;

@@ -3,6 +3,7 @@
 namespace NoccyLabs\LogPipe\Transport;
 
 use NoccyLabs\LogPipe\Message\MonologMessage;
+use NoccyLabs\LogPipe\Message\ConsoleMessage;
 
 abstract class TransportTestAbstract extends \PhpUnit_Framework_TestCase
 {
@@ -131,6 +132,20 @@ abstract class TransportTestAbstract extends \PhpUnit_Framework_TestCase
                 'formatted' => '[2015-03-07 04:20:39] main.EMERGENCY: Oh my god! [] []'
             )) ]
         ;
+
+        $messages[] = [new ConsoleMessage([
+            "_client_id" => "tester",
+            "message" => "This is a message",
+            "channel" => "php.ERROR",
+            "level" => 500
+        ])];
+
+        $messages[] = [new ConsoleMessage([
+            "_client_id" => "long_message",
+            "message" => str_repeat("Hello",10000),
+            "channel" => "test",
+            "level" => 500
+        ])];
 
         return $messages;
     }
