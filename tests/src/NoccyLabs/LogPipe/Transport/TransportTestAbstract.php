@@ -75,6 +75,14 @@ abstract class TransportTestAbstract extends \PhpUnit_Framework_TestCase
         $this->server->listen();
     }
 
+    public function testListeningTwice()
+    {
+        $this->server->listen();
+        $this->client->listen();
+        $this->assertNull($this->server->receive());
+        $this->assertNull($this->client->receive());
+    }
+
     public function testReopeningListenerAsClient()
     {
         $this->server->listen();

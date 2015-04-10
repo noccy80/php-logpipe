@@ -8,17 +8,30 @@ use Monolog\Logger;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
+/**
+ * Class LogWriteCommand
+ * @package NoccyLabs\LogPipe\Application\Command
+ */
 class LogWriteCommand extends AbstractCommand
 {
 
+    /**
+     * @var string
+     */
     protected $cmdname;
 
+    /**
+     * @param string $cmdname
+     */
     public function __construct($cmdname="log:write")
     {
         $this->cmdname = $cmdname;
         parent::__construct();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this->setName($this->cmdname);
@@ -37,6 +50,9 @@ class LogWriteCommand extends AbstractCommand
     }
 
 
+    /**
+     * {@inheritdoc}
+     */
     protected function exec()
     {
 

@@ -5,20 +5,46 @@ namespace NoccyLabs\LogPipe\Transport;
 
 use NoccyLabs\LogPipe\Message\MessageInterface;
 
+/**
+ * Class TcpTransport
+ * @package NoccyLabs\LogPipe\Transport
+ */
 class TcpTransport extends TransportAbstract {
 
+    /**
+     * @var
+     */
     protected $host;
 
+    /**
+     * @var
+     */
     protected $port;
 
+    /**
+     * @var
+     */
     protected $stream;
 
+    /**
+     * @var array
+     */
     protected $clients = [];
 
+    /**
+     * @var array
+     */
     protected $buffer = [];
 
+    /**
+     * @var array
+     */
     protected $messages = [];
 
+    /**
+     * @param $endpoint
+     * @throws \Exception
+     */
     public function __construct($endpoint)
     {
         list($host, $port, $options) = explode(":", $endpoint.':');
@@ -33,6 +59,9 @@ class TcpTransport extends TransportAbstract {
         parent::__construct($options);
     }
 
+    /**
+     * @param MessageInterface $message
+     */
     public function send(MessageInterface $message)
     {
         // Bail if we don't have an open stream
@@ -47,6 +76,10 @@ class TcpTransport extends TransportAbstract {
         }
     }
 
+    /**
+     * @param bool $blocking
+     * @return mixed|null|void
+     */
     public function receive($blocking=false)
     {
         static $buffer;
@@ -74,9 +107,8 @@ class TcpTransport extends TransportAbstract {
                     $sh = (string)$stream;
                     stream_set_blocking($stream, false);
                     $read = fread($stream, 65535);
-    
+
                     if ($read == null) {
-                        //echo "Closing {$sh}\n";
                         // remove the client from the list
                         $this->clients = array_diff($this->clients, array($stream));
                         // close the socket and resume
@@ -84,30 +116,13 @@ class TcpTransport extends TransportAbstract {
                         unset($this->buffer[$sh]);
                         break;
                     }
-    
+
                     if (!array_key_exists($sh, $this->buffer)) {
                         $this->buffer[$sh] = null;
                     }
                     $this->buffer[$sh] .= $read;
-    
-                    //printf("Buffer %s len=%d\n", $sh, strlen($this->buffer[$sh]));
 
                     while (($msg = $this->protocol->unpack($this->buffer[$sh]))) {
-                    /*while (strlen($this->buffer[$sh]) > 6) {
-                        $header = unpack("vsize/Vcrc32", substr($this->buffer[$sh], 0, 6));
-                        if ((strlen($this->buffer[$sh]) < $header['size'] - 6)) {
-                            echo "Insufficient data\n";
-                            break;
-                        }
-                        $data = substr($this->buffer[$sh], 6, $header['size']);
-                        $this->buffer[$sh] = substr($this->buffer[$sh], $header['size']+6);
-                        //printf("Popped data (len=%d) buffer remaining len=%d\n", strlen($data), strlen($this->buffer[$sh]));
-                        if (crc32($data) != $header['crc32']) {
-                            $this->buffer[$sh] = null;
-                            error_log("Warning: Message with invalid crc32 encountered.");
-                            break;
-                        }
-                        $rcv = @unserialize($data);*/
                         $this->messages[] = $msg;
                     }
                 }
@@ -117,6 +132,9 @@ class TcpTransport extends TransportAbstract {
 
     }
 
+    /**
+     *
+     */
     public function listen()
     {
         if (($this->stream) && (is_resource($this->stream))) {
@@ -128,7 +146,7 @@ class TcpTransport extends TransportAbstract {
         $errno   = null;
         $errstr  = null;
 
-        $this->stream = stream_socket_server(
+        $this->stream = @stream_socket_server(
             "tcp://{$this->host}:{$this->port}",
             $errno,
             $errstr,
@@ -140,6 +158,9 @@ class TcpTransport extends TransportAbstract {
         }
     }
 
+    /**
+     *
+     */
     public function connect()
     {
         if (($this->stream) && (is_resource($this->stream))) {
@@ -167,6 +188,9 @@ class TcpTransport extends TransportAbstract {
         }
     }
 
+    /**
+     *
+     */
     public function close()
     {
         if (is_resource($this->stream)) {

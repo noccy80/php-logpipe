@@ -2,17 +2,35 @@
 
 namespace NoccyLabs\LogPipe\Posix;
 
+/**
+ * Posix fifo wrapper
+ *
+ * @package NoccyLabs\LogPipe\Posix
+ */
 class Fifo
 {
+    /**
+     * @var string The path to the fifo
+     */
     protected $path;
 
+    /**
+     * @var resource The fifo stream
+     */
     protected $fifo;
 
+    /**
+     * @param $path
+     */
     public function __construct($path)
     {
         $this->path = $path;
     }
 
+    /**
+     * Create the fifo and open it as a a reader. This will be done non-blocking.
+     *
+     */
     public function create()
     {
         if (file_exists($this->path)) {
@@ -22,6 +40,10 @@ class Fifo
         $this->fifo = fopen($this->path, "r+");
     }
 
+    /**
+     *
+     * @return bool
+     */
     public function open()
     {
         if (!file_exists($this->path)) {
@@ -31,6 +53,10 @@ class Fifo
         $this->fifo = fopen($this->path, "w");
     }
 
+    /**
+     * Close the fifo, but don't destroy it.
+     *
+     */
     public function close()
     {
         if (is_resource($this->fifo)) {
@@ -38,6 +64,10 @@ class Fifo
         }
     }
 
+    /**
+     * Close and destroy the fifo
+     *
+     */
     public function destroy()
     {
         $this->close();
@@ -46,6 +76,10 @@ class Fifo
         }
     }
 
+    /**
+     * @param int $bytes
+     * @return null|string
+     */
     public function read($bytes=1024)
     {
         if (!$this->fifo) {
@@ -56,6 +90,10 @@ class Fifo
         return $data;
     }
 
+    /**
+     * @param $data
+     * @return bool
+     */
     public function write($data)
     {
         if (!$this->fifo) {

@@ -5,16 +5,31 @@ namespace NoccyLabs\LogPipe\Dumper;
 
 use NoccyLabs\LogPipe\Message\MessageInterface;
 
+/**
+ * Class Formatter
+ * @package NoccyLabs\LogPipe\Dumper
+ */
 class Formatter {
 
+    /**
+     * @var
+     */
     protected $message_style;
 
+    /**
+     * @param $style
+     * @return $this
+     */
     public function setMessageStyle($style)
     {
         $this->message_style = $style;
         return $this;
     }
 
+    /**
+     * @param MessageInterface $message
+     * @return MessageInterface|string
+     */
     public function format(MessageInterface $message)
     {
 
@@ -23,6 +38,11 @@ class Formatter {
 
     }
 
+    /**
+     * @param $style
+     * @param MessageInterface $message
+     * @return string
+     */
     protected function doFormat($style, MessageInterface $message)
     {
         if (is_callable($style)) {

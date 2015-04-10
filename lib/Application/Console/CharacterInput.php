@@ -2,20 +2,41 @@
 
 namespace NoccyLabs\LogPipe\Application\Console;
 
+/**
+ * Class CharacterInput
+ * @package NoccyLabs\LogPipe\Application\Console
+ */
 class CharacterInput
 {
+    /**
+     *
+     */
     const SEQ_CLEAR_LINE = "\r\e[J";
 
+    /**
+     * @var
+     */
     protected $enabled;
 
+    /**
+     * @var Stty
+     */
     protected $stty;
 
+    /**
+     * @param bool $enable
+     */
     public function __construct($enable=true)
     {
         $this->stty = new Stty();
         $this->enable($enable);
     }
 
+    /**
+     * Enable character input mode. Pass false to disable and go back to line-buffered mode.
+     *
+     * @param $enable bool True for character-oriented mode, false for line-buffered mode.
+     */
     public function enable($enable)
     {
         if ($enable && (!$this->enabled)) {
@@ -28,11 +49,17 @@ class CharacterInput
         }
     }
 
+    /**
+     *
+     */
     public function __destruct()
     {
         $this->enable(false);
     }
 
+    /**
+     * @return null|string
+     */
     public function readChar()
     {
         static $buffer;
@@ -50,6 +77,14 @@ class CharacterInput
         return NULL;
     }
 
+    /**
+     * Custom readline implementation.
+     *
+     * @param $prompt
+     * @param array $history
+     * @param callable $tick_callback Function to call in order to update things while reading
+     * @return null|string
+     */
     public function readLine($prompt, array $history=null, callable $tick_callback=null)
     {
         $input = null;

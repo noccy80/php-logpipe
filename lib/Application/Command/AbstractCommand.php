@@ -9,12 +9,27 @@ use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 
 
+/**
+ * This class provides an abstract base for the console commands.
+ *
+ * @package NoccyLabs\LogPipe\Application\Command
+ */
 abstract class AbstractCommand extends Command
 {
+    /**
+     * @var InputInterface
+     */
     protected $input;
 
+    /**
+     * @var OutputInterface
+     */
     protected $output;
 
+    /**
+     * @param InputInterface $input
+     * @param OutputInterface $output
+     */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $this->input = $input;
@@ -22,5 +37,8 @@ abstract class AbstractCommand extends Command
         $this->exec();
     }
 
+    /**
+     * @return mixed
+     */
     abstract protected function exec();
 }

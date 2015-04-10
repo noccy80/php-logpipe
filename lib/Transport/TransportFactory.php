@@ -2,8 +2,16 @@
 
 namespace NoccyLabs\LogPipe\Transport;
 
+/**
+ * Class TransportFactory
+ * @package NoccyLabs\LogPipe\Transport
+ */
 class TransportFactory
 {
+    /**
+     * @param $uri
+     * @return mixed
+     */
     public static function create($uri)
     {
         if (strpos($uri,":")===false) {

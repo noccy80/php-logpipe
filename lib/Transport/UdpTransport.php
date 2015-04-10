@@ -5,14 +5,31 @@ namespace NoccyLabs\LogPipe\Transport;
 use NoccyLabs\LogPipe\Message\MessageInterface;
 use NoccyLabs\LogPipe\Serializer\SerializerFactory;
 
+/**
+ * Class UdpTransport
+ * @package NoccyLabs\LogPipe\Transport
+ */
 class UdpTransport extends TransportAbstract
 {
+    /**
+     * @var
+     */
     protected $host;
 
+    /**
+     * @var
+     */
     protected $port;
 
+    /**
+     * @var
+     */
     protected $stream;
 
+    /**
+     * @param $endpoint
+     * @throws \Exception
+     */
     public function __construct($endpoint)
     {
         list($host, $port, $options) = explode(":", $endpoint.':');
@@ -27,6 +44,9 @@ class UdpTransport extends TransportAbstract
         parent::__construct($options);
     }
 
+    /**
+     * @param MessageInterface $message
+     */
     public function send(MessageInterface $message)
     {
         if (!$this->stream) { return; }
@@ -38,6 +58,10 @@ class UdpTransport extends TransportAbstract
         }
     }
 
+    /**
+     * @param bool $blocking
+     * @return mixed|null|void
+     */
     public function receive($blocking=false)
     {
         static $buffer;
@@ -52,6 +76,9 @@ class UdpTransport extends TransportAbstract
         return $this->protocol->unpack($buffer);
     }
 
+    /**
+     *
+     */
     public function listen()
     {
         if (($this->stream) && (is_resource($this->stream))) {
@@ -75,6 +102,9 @@ class UdpTransport extends TransportAbstract
         }
     }
 
+    /**
+     *
+     */
     public function connect()
     {
         if (($this->stream) && (is_resource($this->stream))) {
@@ -97,6 +127,9 @@ class UdpTransport extends TransportAbstract
         );
     }
 
+    /**
+     *
+     */
     public function close()
     {
     }

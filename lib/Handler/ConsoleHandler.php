@@ -6,19 +6,44 @@ use NoccyLabs\LogPipe\Message\ConsoleMessage;
 use NoccyLabs\LogPipe\Transport\TransportInterface;
 use NoccyLabs\LogPipe\Transport\TransportFactory;
 
+/**
+ * The ConsoleHandler is poorly named, but relays errors and exceptions that would normally end up in the console
+ * over a transport.
+ *
+ * @package NoccyLabs\LogPipe\Handler
+ */
 class ConsoleHandler
 {
+    /**
+     * @var
+     */
     protected $transport_uri;
+    /**
+     * @var
+     */
     protected $transport;
+    /**
+     * @var
+     */
     protected $initialized;
+    /**
+     * @var
+     */
     protected $client_id;
 
+    /**
+     * @param $transport
+     */
     public function __construct($transport)
     {
         $this->setClientId(null);
         $this->transport_uri = $transport;
     }
 
+    /**
+     * @param $client_id
+     * @param null $request_id
+     */
     public function setClientId($client_id, $request_id=null)
     {
         if (!$client_id) {
@@ -30,7 +55,11 @@ class ConsoleHandler
         $this->client_id = sprintf("%s:%s", $client_id, $request_id);
     }
 
-    public function setErrorReporting($enable, $error_types = E_ALL|E_STRICT|E_NOTICE)
+    /**
+     * @param $enable
+     * @param int $error_types
+     */
+    public function setErrorReporting($enable, $error_types = E_ALL)
     {
         static $enabled;
         static $previous;
@@ -43,6 +72,9 @@ class ConsoleHandler
         }
     }
 
+    /**
+     * @param $enable
+     */
     public function setExceptionReporting($enable)
     {
         static $enabled;
@@ -56,6 +88,14 @@ class ConsoleHandler
         }
     }
 
+    /**
+     * @param $errno
+     * @param $errstr
+     * @param $errfile
+     * @param $errline
+     * @param $errcontext
+     * @return bool
+     */
     public function _onError($errno, $errstr, $errfile, $errline, $errcontext)
     {
         if (!$this->initialized) {
@@ -95,6 +135,9 @@ class ConsoleHandler
         return false;
     }
 
+    /**
+     * @param \Exception $e
+     */
     public function _onException(\Exception $e)
     {
         if (!$this->initialized) {
@@ -112,6 +155,9 @@ class ConsoleHandler
         $this->transport->send($message);
     }
 
+    /**
+     * @param array $record
+     */
     protected function write(array $record)
     {
 
@@ -123,6 +169,9 @@ class ConsoleHandler
         $this->transport->send($message);
     }
 
+    /**
+     *
+     */
     private function initialize()
     {
         if ($this->transport_uri instanceof TransportInterface) {

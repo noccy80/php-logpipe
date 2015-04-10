@@ -11,8 +11,15 @@ use Symfony\Component\Console\Output\OutputInterface;
 use NoccyLabs\LogPipe\Transport\TransportFactory;
 use NoccyLabs\LogPipe\Dumper\ConsoleDumper;
 
+/**
+ * Class DumpChannelsCommand
+ * @package NoccyLabs\LogPipe\Application\Command
+ */
 class DumpChannelsCommand extends AbstractCommand
 {
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this->setName("dump:channels");
@@ -21,6 +28,9 @@ class DumpChannelsCommand extends AbstractCommand
         $this->setHelp(self::HELP);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function exec()
     {
         $endpoint = $this->input->getArgument("endpoint");
@@ -44,6 +54,9 @@ class DumpChannelsCommand extends AbstractCommand
 
     }
 
+    /**
+     * @param $channel
+     */
     protected function infoFancy($channel)
     {
         static $channels;

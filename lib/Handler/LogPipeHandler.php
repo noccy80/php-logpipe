@@ -9,13 +9,35 @@ use NoccyLabs\LogPipe\Message\MonologMessage;
 use NoccyLabs\LogPipe\Transport\TransportInterface;
 use NoccyLabs\LogPipe\Transport\TransportFactory;
 
+/**
+ * Monolog handler to send messages over a LogPipe transport
+ *
+ * @package NoccyLabs\LogPipe\Handler
+ */
 class LogPipeHandler extends AbstractProcessingHandler
 {
+    /**
+     * @var int
+     */
     protected $transport_uri;
+    /**
+     * @var
+     */
     protected $transport;
+    /**
+     * @var
+     */
     protected $initialized;
+    /**
+     * @var
+     */
     protected $client_id;
 
+    /**
+     * @param int $transport
+     * @param bool|int $level
+     * @param bool $bubble
+     */
     public function __construct($transport, $level = Logger::DEBUG, $bubble = true)
     {
         $this->setClientId(null);
@@ -23,6 +45,10 @@ class LogPipeHandler extends AbstractProcessingHandler
         parent::__construct($level, $bubble);
     }
 
+    /**
+     * @param $client_id
+     * @param null $request_id
+     */
     public function setClientId($client_id, $request_id=null)
     {
         if (!$client_id) {
@@ -34,6 +60,9 @@ class LogPipeHandler extends AbstractProcessingHandler
         $this->client_id = sprintf("%s:%s", $client_id, $request_id);
     }
 
+    /**
+     * @param array $record
+     */
     protected function write(array $record)
     {
 
@@ -45,6 +74,9 @@ class LogPipeHandler extends AbstractProcessingHandler
         $this->transport->send($message);
     }
 
+    /**
+     *
+     */
     private function initialize()
     {
         if ($this->transport_uri instanceof TransportInterface) {

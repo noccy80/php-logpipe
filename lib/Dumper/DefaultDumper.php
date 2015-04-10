@@ -2,8 +2,15 @@
 
 namespace NoccyLabs\LogPipe\Dumper;
 
+/**
+ * Class DefaultDumper
+ * @package NoccyLabs\LogPipe\Dumper
+ */
 class DefaultDumper
 {
+    /**
+     * @param array $record
+     */
     public function dump(array $record)
     {
         $channel    = $record['channel'];

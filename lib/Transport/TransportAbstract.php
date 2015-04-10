@@ -6,18 +6,42 @@ use NoccyLabs\LogPipe\Message\MessageInterface;
 use NoccyLabs\LogPipe\Serializer\SerializerFactory;
 use NoccyLabs\LogPipe\Protocol\PipeV1Protocol;
 
+/**
+ * Class TransportAbstract
+ * @package NoccyLabs\LogPipe\Transport
+ */
 abstract class TransportAbstract implements TransportInterface
 {
+    /**
+     * @var
+     */
     protected $host;
 
+    /**
+     * @var
+     */
     protected $port;
 
+    /**
+     * @var
+     */
     protected $stream;
 
+    /**
+     * @var array
+     */
     protected $options;
 
+    /**
+     * @var PipeV1Protocol
+     */
     protected $protocol;
 
+    /**
+     * @param $options
+     * @throws \Exception
+     * @throws \NoccyLabs\LogPipe\Exception\SerializerException
+     */
     public function __construct($options)
     {
         $parsed = [];
@@ -38,6 +62,11 @@ abstract class TransportAbstract implements TransportInterface
 
     }
 
+    /**
+     * @param $name
+     * @param null $default
+     * @return null
+     */
     public function getOption($name, $default=null)
     {
         return array_key_exists($name, $this->options) ? $this->options[$name] : $default;

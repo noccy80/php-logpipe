@@ -27,10 +27,20 @@ use NoccyLabs\LogPipe\Dumper\Formatter;
  */
 class MonologMessage implements MessageInterface {
 
+    /**
+     * @var array
+     */
     protected $record = [];
 
+    /**
+     * @var string
+     */
     protected $client_id;
 
+    /**
+     * @param array $record
+     * @param null $client_id
+     */
     public function __construct(array $record=null, $client_id=null)
     {
         $this->record = $record;
@@ -43,17 +53,26 @@ class MonologMessage implements MessageInterface {
         $this->client_id = $client_id?:uniqid();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getData()
     {
         return [ $this->client_id, $this->record ];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function setData(array $data)
     {
         $this->client_id = $data[0];
         $this->record = (array)$data[1];
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getChannel()
     {
         return array_key_exists("channel", $this->record)
@@ -61,6 +80,9 @@ class MonologMessage implements MessageInterface {
             : null;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getLevel()
     {
         return array_key_exists("level", $this->record)
@@ -68,21 +90,50 @@ class MonologMessage implements MessageInterface {
             : 0;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getText()
     {
         return $this->record['message'];
     }
 
+    /**
+     * @return string
+     */
     public function getMessage()
     {
         return rtrim($this->record['formatted']);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getClientId()
     {
         return $this->client_id;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function getTimestamp()
+    {
+        return $this->record['datetime'];
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getSource()
+    {
+        return NULL;
+    }
+
+    /**
+     * @param Formatter $formatter
+     * @return MessageInterface|string
+     */
     public function format(Formatter $formatter)
     {
         return $formatter->format($this);

@@ -3,15 +3,27 @@
 namespace NoccyLabs\LogPipe\Dumper;
 
 use NoccyLabs\LogPipe\Message\MessageInterface;
-use NoccyLabs\LogPipe\Message\MonologMessage;
 use Symfony\Component\Console\Output\OutputInterface;
 
+/**
+ * Class ConsoleDumper
+ * @package NoccyLabs\LogPipe\Dumper
+ */
 class ConsoleDumper
 {
+    /**
+     * @var OutputInterface
+     */
     protected $output;
 
+    /**
+     * @var Formatter
+     */
     protected $formatter;
 
+    /**
+     * @param OutputInterface $output
+     */
     public function __construct(OutputInterface $output)
     {
         $this->output = $output;
@@ -19,6 +31,9 @@ class ConsoleDumper
         $this->formatter->setMessageStyle(array($this,"getRecordMarkup"));
     }
 
+    /**
+     * @param MessageInterface $message
+     */
     public function dump(MessageInterface $message)
     {
         $client     = $message->getClientId();
@@ -31,6 +46,10 @@ class ConsoleDumper
         );
     }
 
+    /**
+     * @param $message
+     * @return string
+     */
     public function getRecordMarkup($message)
     {
         $level      = $message->getLevel();

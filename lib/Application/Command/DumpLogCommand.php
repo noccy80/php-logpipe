@@ -3,6 +3,7 @@
 namespace NoccyLabs\LogPipe\Application\Command;
 
 use NoccyLabs\LogPipe\Application\InputHelper;
+use NoccyLabs\LogPipe\Application\LogDumper\InteractiveLogDumper;
 use NoccyLabs\LogPipe\Dumper\Formatter;
 use NoccyLabs\LogPipe\Filter\MessageFilter;
 use Symfony\Component\Console\Command\Command;
@@ -14,16 +15,29 @@ use NoccyLabs\LogPipe\Transport\TransportFactory;
 use NoccyLabs\LogPipe\Dumper\ConsoleDumper;
 use NoccyLabs\LogPipe\Application\LogDumper\LogDumper;
 
+/**
+ * Class DumpLogCommand
+ * @package NoccyLabs\LogPipe\Application\Command
+ */
 class DumpLogCommand extends AbstractCommand
 {
+    /**
+     * @var string
+     */
     protected $cmdname;
 
+    /**
+     * @param string $cmdname
+     */
     public function __construct($cmdname="dump:log")
     {
         $this->cmdname = $cmdname;
         parent::__construct();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this->setName($this->cmdname);
@@ -40,6 +54,9 @@ class DumpLogCommand extends AbstractCommand
         $this->setHelp(self::HELP);
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function exec()
     {
         $endpoint = $this->input->getArgument("endpoint");
@@ -67,12 +84,15 @@ class DumpLogCommand extends AbstractCommand
             $config_opts[$key] = $value;
         }
 
-        $log_dumper = new LogDumper($config_opts);
+        if ($this->input->getOption("interactive")) {
+            $log_dumper = new InteractiveLogDumper($config_opts);
+        } else {
+            $log_dumper = new LogDumper($config_opts);
+        }
         $log_dumper->setTransport($transport);
         $log_dumper->setDumper($dumper);
         $log_dumper->setFilter($filter);
         $log_dumper->setOutput($this->output);
-        $log_dumper->setInteractive($this->input->getOption("interactive"));
         $log_dumper->setShowSquelchInfo(!$this->input->getOption("no-squelch"));
         $log_dumper->run();
 

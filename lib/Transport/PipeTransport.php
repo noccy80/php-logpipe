@@ -7,12 +7,26 @@ use NoccyLabs\LogPipe\Message\MessageInterface;
 use NoccyLabs\LogPipe\Transport\TransportInterface;
 use NoccyLabs\LogPipe\Posix\Fifo;
 
+/**
+ * Class PipeTransport
+ * @package NoccyLabs\LogPipe\Transport
+ */
 class PipeTransport extends TransportAbstract
 {
+    /**
+     * @var Fifo
+     */
     protected $fifo;
 
+    /**
+     * @var
+     */
     protected $is_listener;
 
+    /**
+     * @param $params
+     * @throws \Exception
+     */
     public function __construct($params)
     {
         list($path, $options) = explode(":", $params.':');
@@ -81,6 +95,9 @@ class PipeTransport extends TransportAbstract
         $this->fifo->open();
     }
 
+    /**
+     *
+     */
     public function close()
     {
         if ($this->is_listener) {

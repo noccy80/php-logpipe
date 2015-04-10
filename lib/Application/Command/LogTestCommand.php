@@ -7,17 +7,30 @@ use NoccyLabs\LogPipe\Handler\LogPipeHandler;
 use Monolog\Logger;
 use Symfony\Component\Console\Input\InputArgument;
 
+/**
+ * Class LogTestCommand
+ * @package NoccyLabs\LogPipe\Application\Command
+ */
 class LogTestCommand extends AbstractCommand
 {
 
+    /**
+     * @var string
+     */
     protected $cmdname;
 
+    /**
+     * @param string $cmdname
+     */
     public function __construct($cmdname="log:test")
     {
         $this->cmdname = $cmdname;
         parent::__construct();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this->setName($this->cmdname);
@@ -26,6 +39,9 @@ class LogTestCommand extends AbstractCommand
     }
 
 
+    /**
+     * {@inheritdoc}
+     */
     protected function exec()
     {
 

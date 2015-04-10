@@ -8,17 +8,30 @@ use Monolog\Logger;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Input\InputArgument;
 
+/**
+ * Class LogPassCommand
+ * @package NoccyLabs\LogPipe\Application\Command
+ */
 class LogPassCommand extends AbstractCommand
 {
 
+    /**
+     * @var string
+     */
     protected $cmdname;
 
+    /**
+     * @param string $cmdname
+     */
     public function __construct($cmdname="log:pass")
     {
         $this->cmdname = $cmdname;
         parent::__construct();
     }
 
+    /**
+     * {@inheritdoc}
+     */
     protected function configure()
     {
         $this->setName($this->cmdname);
@@ -29,6 +42,9 @@ class LogPassCommand extends AbstractCommand
     }
 
 
+    /**
+     * {@inheritdoc}
+     */
     protected function exec()
     {
 

@@ -78,4 +78,15 @@ class PipeV1ProtocolTest extends ProtocolTestAbstract
         ];
     }
     
+    /**
+     * @dataProvider getSerializerData
+     */
+    public function testUnpackingBogusData($serializer)
+    {
+        $ser = SerializerFactory::getSerializerForName($serializer);
+        $proto = $this->getProtocol($ser);
+        $buffer = str_repeat("\0",10000);
+        $unpack = $proto->unpack($buffer);
+        $this->assertNull($unpack);
+    }
 }

@@ -4,8 +4,17 @@ namespace NoccyLabs\LogPipe\Application;
 
 use Symfony\Component\Console\Application;
 
+/**
+ * Class LogPipeApplication
+ * @package NoccyLabs\LogPipe\Application
+ */
 class LogPipeApplication extends Application
 {
+    /**
+     * Main console application entrypoint
+     *
+     * @throws \Exception
+     */
     public static function main()
     {
         $inst = new self(APP_NAME, APP_VERSION);
