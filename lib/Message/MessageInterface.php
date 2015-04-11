@@ -46,4 +46,9 @@ interface MessageInterface {
      */
     public function getClientId();
 
+    /**
+     * @return mixed
+     */
+    public function __toString();
+
 }

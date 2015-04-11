@@ -78,7 +78,9 @@ abstract class TransportTestAbstract extends \PhpUnit_Framework_TestCase
     public function testListeningTwice()
     {
         $this->server->listen();
-        $this->client->listen();
+        try {
+            $this->client->listen();
+        } catch (\Exception $e) {}
         $this->assertNull($this->server->receive());
         $this->assertNull($this->client->receive());
     }
@@ -118,6 +120,9 @@ abstract class TransportTestAbstract extends \PhpUnit_Framework_TestCase
             usleep(1000);
         }
         $this->assertEquals($message, $received);
+        $this->client->close();
+        $void = $this->server->receive();
+        $this->assertNull($void);
     }
 
     public function getMessages()

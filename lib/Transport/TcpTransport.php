@@ -69,7 +69,7 @@ class TcpTransport extends TransportAbstract {
             return;
         }
         try {
-            $data = $this->protocol->pack($message);
+            $data = $this->protocol->pack($message, $this->serializer);
             @fwrite($this->stream, $data);
         } catch (\Exception $e) {
             // Do nothing with this message if serialization failed.
@@ -122,7 +122,7 @@ class TcpTransport extends TransportAbstract {
                     }
                     $this->buffer[$sh] .= $read;
 
-                    while (($msg = $this->protocol->unpack($this->buffer[$sh]))) {
+                    while (($msg = $this->protocol->unpack($this->buffer[$sh], $this->serializer))) {
                         $this->messages[] = $msg;
                     }
                 }
@@ -153,8 +153,8 @@ class TcpTransport extends TransportAbstract {
             STREAM_SERVER_BIND|STREAM_SERVER_LISTEN
         );
 
-        if ($errno) {
-            error_log("Warning: Listen failed {$errno} {$errstr}");
+        if ($errno || !$this->stream) {
+            throw new \InvalidArgumentException("TcpTransport:listen failed {$errno} {$errstr}");
         }
     }
 

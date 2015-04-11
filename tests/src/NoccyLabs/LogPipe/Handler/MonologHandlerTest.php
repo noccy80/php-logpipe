@@ -17,7 +17,9 @@ class MonologHandlerTest extends \PhpUnit_Framework_TestCase
 
     public function teardown()
     {
-        $this->server->close();
+        if ($this->server) {
+            $this->server->close();
+        }
     }
 
     public function testLoggingThroughMonolog()

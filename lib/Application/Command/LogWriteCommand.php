@@ -79,6 +79,10 @@ class LogWriteCommand extends AbstractCommand
 const HELP_TEXT = <<<EOT
 This command writes a message to a transport. It can be used to generate log events.
 
+To write an error message over the default transport using the channel "scripts":
+
+    $ <comment>logpipe write --error --channel scripts "The file foobar could not be deleted"</comment>
+
 EOT;
 
 }

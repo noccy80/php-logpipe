@@ -5,6 +5,7 @@ namespace NoccyLabs\LogPipe\Transport;
 use NoccyLabs\LogPipe\Message\MessageInterface;
 use NoccyLabs\LogPipe\Serializer\SerializerFactory;
 use NoccyLabs\LogPipe\Protocol\PipeV1Protocol;
+use NoccyLabs\LogPipe\Serializer\SerializerInterface;
 
 /**
  * Class TransportAbstract
@@ -38,6 +39,11 @@ abstract class TransportAbstract implements TransportInterface
     protected $protocol;
 
     /**
+     * @var SerializerInterface
+     */
+    protected $serializer;
+
+    /**
      * @param $options
      * @throws \Exception
      * @throws \NoccyLabs\LogPipe\Exception\SerializerException
@@ -49,12 +55,12 @@ abstract class TransportAbstract implements TransportInterface
 
         $this->options = (array)$parsed;
 
-        $serializer = SerializerFactory::getSerializerForName($this->getOption('serializer', 'php'));
+        $this->serializer = SerializerFactory::getSerializerForName($this->getOption('serializer', 'php'));
 
         $proto = $this->getOption('protocol', 1);
         switch ($proto) {
             case 1:
-                $this->protocol   = new PipeV1Protocol($serializer);
+                $this->protocol   = new PipeV1Protocol();
                 break;
             default:
                 throw new \Exception("Invalid/unsupported protocol requested: {$proto}");

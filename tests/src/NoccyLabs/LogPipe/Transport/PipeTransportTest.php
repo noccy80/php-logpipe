@@ -11,4 +11,19 @@ class PipeTransportTest extends TransportTestAbstract
     {
         return "pipe:/tmp/logpipe-phpunit.pipe";
     }
+
+    /**
+     * @expectedException \Exception
+     */
+    public function testListenFailureThrowsException()
+    {
+        $transport = new PipeTransport("/blargh");
+        $transport->listen();
+    }
+
+    public function testConnectFailureIsSilent()
+    {
+        $transport = new PipeTransport("/blargh");
+        $transport->connect();
+    }
 }

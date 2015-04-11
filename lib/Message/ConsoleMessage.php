@@ -5,7 +5,8 @@ namespace NoccyLabs\LogPipe\Message;
 use NoccyLabs\LogPipe\Dumper\Formatter;
 
 /**
- * Class ConsoleMessage
+ * Class that wraps a simple message for serialization
+ *
  * @package NoccyLabs\LogPipe\Message
  */
 class ConsoleMessage implements MessageInterface {
@@ -106,4 +107,11 @@ class ConsoleMessage implements MessageInterface {
         return NULL;
     }
 
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
+    {
+        return $this->getMessage();
+    }
 }

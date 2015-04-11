@@ -51,7 +51,7 @@ class UdpTransport extends TransportAbstract
     {
         if (!$this->stream) { return; }
         try {
-            $data = $this->protocol->pack($message);
+            $data = $this->protocol->pack($message, $this->serializer);
             @fwrite($this->stream, $data);
         } catch (\Exception $e) {
             // Do nothing with this message if serialization failed.
@@ -73,7 +73,7 @@ class UdpTransport extends TransportAbstract
         $read = fread($this->stream, 65535);
 
         $buffer .= $read;
-        return $this->protocol->unpack($buffer);
+        return $this->protocol->unpack($buffer, $this->serializer);
     }
 
     /**
@@ -90,15 +90,15 @@ class UdpTransport extends TransportAbstract
         $errno   = null;
         $errstr  = null;
 
-        $this->stream = stream_socket_server(
+        $this->stream = @stream_socket_server(
             "udp://{$this->host}:{$this->port}",
             $errno,
             $errstr,
             STREAM_SERVER_BIND
         );
 
-        if ($errno) {
-            error_log("Warning: Listen failed {$errno} {$errstr}");
+        if ($errno || !$this->stream) {
+            throw new \InvalidArgumentException("UdpTransport:listen failed {$errno} {$errstr}");
         }
     }
 
@@ -117,7 +117,7 @@ class UdpTransport extends TransportAbstract
         $errno   = null;
         $errstr  = null;
 
-        $this->stream = stream_socket_client(
+        $this->stream = @stream_socket_client(
             "udp://{$this->host}:{$this->port}",
             $errno,
             $errstr,

@@ -33,29 +33,23 @@ class PipeV1Protocol implements ProtocolInterface
     const PROTOCOL_VERSION = 1;
 
     /**
-     * @var SerializerInterface
+     * {@inheritdoc}
      */
-    protected $serializer;
-
-    /**
-     * @param SerializerInterface $serializer
-     */
-    public function __construct(SerializerInterface $serializer)
+    public function getVersion()
     {
-        $this->serializer = $serializer;
+        return self::PROTOCOL_VERSION;
     }
 
     /**
-     * @param MessageInterface $message
-     * @return string
+     * {@inheritdoc}
      */
-    public function pack(MessageInterface $message)
+    public function pack(MessageInterface $message, SerializerInterface $serializer)
     {
         $version = self::PROTOCOL_VERSION;
-        $format = $this->serializer->getTag();
+        $format = $serializer->getTag();
 
         try {
-            $msg = $this->serializer->serialize($message);
+            $msg = $serializer->serialize($message);
             $header = pack(
                 self::PACK_FORMAT,
                 0xFF,
@@ -71,10 +65,9 @@ class PipeV1Protocol implements ProtocolInterface
     }
 
     /**
-     * @param $buffer
-     * @return mixed|null
+     * {@inheritdoc}
      */
-    public function unpack(&$buffer)
+    public function unpack(&$buffer, SerializerInterface $serializer)
     {
         if (strlen($buffer) < self::HEADER_SIZE) {
             return NULL;
@@ -100,7 +93,7 @@ class PipeV1Protocol implements ProtocolInterface
             return NULL;
         }
 
-        $rcv = $this->serializer->unserialize($data);
+        $rcv = $serializer->unserialize($data);
         return $rcv;
     }
 }

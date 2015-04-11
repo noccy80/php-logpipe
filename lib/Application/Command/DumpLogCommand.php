@@ -112,7 +112,12 @@ To listen for log messages over UDP on all interfaces on port 12345:
 
 To restrict the level of messages being displayed, use the <info>--level</info> option:
 
-    $ <comment>logpipe dump --level </comment>
+    $ <comment>logpipe dump --level debug</comment>
+
+To use the interactive dumper, which keeps the last bunch of messages in a searchable buffer,
+pass the <info>-i</info> or <info>--interactive</info> option:
+
+    $ <comment>logpipe dump -i</comment>
 
 Channels can be used for filtering as well. If the <info>--channels</info> option is specified, it will take
 precedence, and only channels matching will be displayed disregarding <info>--exclude</info> if provided.
@@ -125,10 +130,12 @@ To dump EVERYTHING EXCEPT the channel monolog:
 
     $ <comment>logpipe dump --exclude monolog</comment>
 
-The log of events can be dumped in full to a file with <info>--output</info> or filtered with <info>--tee</info>.
+To exclude both monolog and event:
 
-Additionally, the <info>--no-squelch</info> option is available to hide the notification about the number of
-squelched messages.
+    $ <comment>logpipe dump -x monolog,event</comment>
+
+The <info>--no-squelch</info> option is available to hide the notification about the number of squelched
+messages.
 
 TEXT;
 }

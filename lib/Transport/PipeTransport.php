@@ -47,7 +47,7 @@ class PipeTransport extends TransportAbstract
     {
         if (!$this->fifo) { return false; }
         try {
-            $data = $this->protocol->pack($message);
+            $data = $this->protocol->pack($message, $this->serializer);
             $this->fifo->write($data);
             return true;
         } catch (\Exception $e) {
@@ -70,7 +70,7 @@ class PipeTransport extends TransportAbstract
 
         $buffer .= $read;
 
-        return $this->protocol->unpack($buffer);
+        return $this->protocol->unpack($buffer, $this->serializer);
     }
 
 

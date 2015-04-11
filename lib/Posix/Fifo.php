@@ -36,7 +36,10 @@ class Fifo
         if (file_exists($this->path)) {
             unlink($this->path);
         }
-        posix_mkfifo($this->path, 0777);
+        @posix_mkfifo($this->path, 0777);
+        if (!file_exists($this->path)) {
+            throw new \Exception("Unable to create fifo");
+        }
         $this->fifo = fopen($this->path, "r+");
     }
 
@@ -50,7 +53,7 @@ class Fifo
             $this->fifo = null;
             return false;
         }
-        $this->fifo = fopen($this->path, "w");
+        $this->fifo = @fopen($this->path, "w");
     }
 
     /**
