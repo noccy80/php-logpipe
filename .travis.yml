@@ -5,5 +5,5 @@ php:
   - 5.6
   - hhvm
 install:
-  - pecl install msgpack
+  - pecl install msgpack-0.5.5
   - composer install
