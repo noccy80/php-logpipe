@@ -1,6 +1,8 @@
 LogPipe
 =======
 
+![Build status](https://travis-ci.org/noccy80/php-logpipe.svg?branch=master)
+
 LogPipe is a library and an application to monitor PHP applications and monolog logs in real time. This is done by
 serializing the data and sending the serialized blobs over one of the supported transports. The transport doesn't
 need to have a listener in the other end; LogPipe is designed to fail quietly without affecting your application.
