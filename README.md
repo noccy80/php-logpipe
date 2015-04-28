@@ -193,6 +193,7 @@ platforms may encounter issues.
 
     [!] Improvement  [*] Milestone  [+] New feature  [-] Removed feature
 
+    0.2.4   [!] CPU load during dumping reducded
     0.2.3   [*] The PipeV1Protocol header increased to 16 bytes.
             [+] Separated the standard dumper and the interactive dumper.
             [!] Added lots of phpdoc comments, and code cleanup.
@@ -218,3 +219,4 @@ platforms may encounter issues.
     0.3     [+] Use noccylabs/console-input to provide the interactive shell.
             [+] Improve the interactive shell with on-the-fly filtering based on messages,
                 levels and channels.
+            [+] Add a --bell-on-error option, to use with visual bell option of terminal emulators
