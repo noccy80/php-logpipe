@@ -38,7 +38,7 @@ class InteractiveLogDumper extends LogDumper
             if (!$this->handleInput($input)) {
                 break;
             }
-            usleep(100);
+            usleep(10000);
         }
     }
 

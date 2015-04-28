@@ -125,7 +125,7 @@ class LogDumper
             if ($msg) {
                 $this->onMessage($msg);
             }
-            usleep(100);
+            usleep(10000);
         }
 
     }
