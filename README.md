@@ -212,11 +212,3 @@ platforms may encounter issues.
             [+] Added support for using the envvar APP_ID, or the define() APP_ID to specify
                 the prefix to use. Setting neither will use the hostname as app id.
     0.1     [*] Initial release.
-
-### Roadmap
-
-    1.0     [+] Full unit tests of application, command and code.
-    0.3     [+] Use noccylabs/console-input to provide the interactive shell.
-            [+] Improve the interactive shell with on-the-fly filtering based on messages,
-                levels and channels.
-            [+] Add a --bell-on-error option, to use with visual bell option of terminal emulators
