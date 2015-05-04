@@ -62,6 +62,7 @@ class LogTestCommand extends AbstractCommand
             $logger->{$level}("Test log event");
         }
 
+        $logger->error(new \Exception("Derp"));
 
     }
 

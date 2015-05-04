@@ -9,7 +9,7 @@ use Symfony\Component\Console\Output\OutputInterface;
  * Class ConsoleDumper
  * @package NoccyLabs\LogPipe\Dumper
  */
-class ConsoleDumper
+class ConsoleDumper extends AbstractDumper
 {
     /**
      * @var OutputInterface
@@ -37,6 +37,11 @@ class ConsoleDumper
     public function dump(MessageInterface $message)
     {
         $client     = $message->getClientId();
+
+        $message = $this->decode($message);
+        if (!$message) {
+            return;
+        }
 
         $output = $this->formatter->format($message);
         $output = str_replace("\n", "\n".str_repeat(" ",strlen($client)+1),$output);
