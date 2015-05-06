@@ -193,6 +193,9 @@ platforms may encounter issues.
 
     [!] Improvement  [*] Milestone  [+] New feature  [-] Removed feature
 
+    0.2.5   [!] Reduced memory load when using the standard (non-interactive) dumper by moving
+                the buffer and configuration logic to the interactive dumper.
+            [+] Exceptions are now unwrapped and displayed in a more useful format.
     0.2.4   [!] CPU load during dumping reducded
     0.2.3   [*] The PipeV1Protocol header increased to 16 bytes.
             [+] Separated the standard dumper and the interactive dumper.
