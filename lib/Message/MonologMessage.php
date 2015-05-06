@@ -90,6 +90,11 @@ class MonologMessage implements MessageInterface {
         return rtrim($this->record['formatted']);
     }
 
+    public function setMessage($message)
+    {
+        $this->record['formatted'] = $message;
+    }
+
     /**
      * {@inheritdoc}
      */
