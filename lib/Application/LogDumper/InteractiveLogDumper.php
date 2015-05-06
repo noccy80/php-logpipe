@@ -15,6 +15,29 @@ class InteractiveLogDumper extends LogDumper
 {
 
     /**
+     * @var FifoBuffer
+     */
+    protected $buffer;
+
+    /**
+     * @var array
+     */
+    protected $options = [
+        "buffer.size"   => 1000,
+        "output.wrap"   => 1,
+        "output.title"  => 0
+    ];
+
+    /**
+     * @param $options
+     */
+    public function __construct($options)
+    {
+        $this->options = array_merge($this->options, $options);
+        $this->buffer = new FifoBuffer($this->getOption("buffer.size"));
+    }
+
+    /**
      *
      */
     public function run()
@@ -27,9 +50,9 @@ class InteractiveLogDumper extends LogDumper
 
         $this->squelched = 0;
 
-        if ($this->getOption("output.title")) { $this->updateTitle(); }
-
         while (!$signal()) {
+
+            if ($this->getOption("output.title")) { $this->updateTitle(); }
 
             $msg = $this->transport->receive();
             if ($msg) {
@@ -40,6 +63,12 @@ class InteractiveLogDumper extends LogDumper
             }
             usleep(10000);
         }
+    }
+
+    protected function onMessage(MessageInterface $msg)
+    {
+        $this->buffer->push($msg);
+        parent::onMessage($msg);
     }
 
     protected function handleInput($input)
@@ -110,6 +139,41 @@ class InteractiveLogDumper extends LogDumper
             $value = $this->options[$key];
             $this->output->write("<options=bold>{$key}</options=bold> = '{$value}'\n");
         }
+    }
+
+    /**
+     * @param $key
+     * @param $value
+     */
+    public function setOption($key, $value)
+    {
+        switch ($key) {
+            case 'buffer.size':
+                $this->buffer = new FifoBuffer($value);
+                break;
+        }
+        $this->options[$key] = $value;
+    }
+
+    /**
+     * @param $key
+     */
+    public function getOption($key)
+    {
+        if (!array_key_exists($key, $this->options)) {
+            $this->output->write("<error>No such option: {$key}</error>");
+            return null;
+        }
+        return $this->options[$key];
+    }
+
+    /**
+     *
+     */
+    protected function updateTitle()
+    {
+        $received = $this->buffer->getTotal();
+        echo "\e]0;LogPipe [{$received}]\x07";
     }
 
 }

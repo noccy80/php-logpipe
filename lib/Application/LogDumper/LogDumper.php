@@ -39,34 +39,11 @@ class LogDumper
     protected $output;
 
     /**
-     * @var FifoBuffer
-     */
-    protected $buffer;
-
-    /**
      * @var bool
      */
     protected $squelch_info = true;
 
     protected $squelched = 0;
-
-    /**
-     * @var array
-     */
-    protected $options = [
-        "buffer.size"   => 1000,
-        "output.wrap"   => 1,
-        "output.title"  => 0
-    ];
-
-    /**
-     * @param $options
-     */
-    public function __construct($options)
-    {
-        $this->options = array_merge($this->options, $options);
-        $this->buffer = new FifoBuffer($this->getOption("buffer.size"));
-    }
 
     /**
      * @param TransportInterface $transport
@@ -121,8 +98,6 @@ class LogDumper
 
         $squelched = 0;
 
-        if ($this->getOption("output.title")) { $this->updateTitle(); }
-
         while (!$signal()) {
 
             $msg = $this->transport->receive();
@@ -136,7 +111,6 @@ class LogDumper
 
     protected function onMessage(MessageInterface $msg)
     {
-        $this->buffer->push($msg);
         if (($out = $this->filter->filterMessage($msg))) {
             if (($this->squelched > 0) && ($this->squelch_info)) {
                 $this->output->writeln("\r<fg=black;bg=yellow> {$this->squelched}</fg=black;bg=yellow><fg=black;bg=yellow;options=bold> messages squelched </fg=black;bg=yellow;options=bold>");
@@ -150,42 +124,6 @@ class LogDumper
                 $this->output->write("\r<fg=black;bg=yellow> {$this->squelched} </fg=black;bg=yellow>");
             }
         }
-        if ($this->getOption("output.title")) { $this->updateTitle(); }
-    }
-
-    /**
-     * @param $key
-     * @param $value
-     */
-    public function setOption($key, $value)
-    {
-        switch ($key) {
-            case 'buffer.size':
-                $this->buffer = new FifoBuffer($value);
-                break;
-        }
-        $this->options[$key] = $value;
-    }
-
-    /**
-     * @param $key
-     */
-    public function getOption($key)
-    {
-        if (!array_key_exists($key, $this->options)) {
-            $this->output->write("<error>No such option: {$key}</error>");
-            return null;
-        }
-        return $this->options[$key];
-    }
-
-    /**
-     *
-     */
-    protected function updateTitle()
-    {
-        $received = $this->buffer->getTotal();
-        echo "\e]0;LogPipe [{$received}]\x07";
     }
 
 }
