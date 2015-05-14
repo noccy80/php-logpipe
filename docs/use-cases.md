@@ -26,6 +26,21 @@ You can even pie dmesg through to logpipe:
     $ dmesg -w | logpipe log:pass --channel dmesg
 
 
+## Tracking server metrics
+
+Dump metrics from within the application:
+
+    $this->logger->info("!metric stats", [
+        "peak" => memory_get_peak_usage(),
+        "timer" => $elapsed_time
+    ]);
+
+Capture them using the dump command
+
+    $ logpipe dump -m metrics.log -q
+    
+For more information, see [metrics-format.md](metrics-format.md).
+
 ## Adding logging to shell scripts
 
 Logging from shell scripts is as simple. Put this in `logpipe.inc`:

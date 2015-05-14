@@ -107,6 +107,11 @@ class ConsoleMessage implements MessageInterface {
         return NULL;
     }
 
+    public function getExtra()
+    {
+        return [];
+    }
+
     /**
      * {@inheritdoc}
      */

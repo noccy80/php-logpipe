@@ -3,6 +3,7 @@
 namespace NoccyLabs\LogPipe\Message;
 
 use NoccyLabs\LogPipe\Dumper\Formatter;
+use NoccyLabs\LogPipe\Common\ArrayUtils;
 
 /**
  * Class that wraps a Monolog record for serialization
@@ -31,8 +32,12 @@ class MonologMessage implements MessageInterface {
 
         // TODO: This is to handle unserializable extra data. There has to be a better
         // way to do this.
-        unset ($this->record['extra']);
-        unset ($this->record['datetime']);
+        if ($this->record) {
+            $extra = array_key_exists('context', $this->record) ? $this->record['context'] : [];
+            $this->record['context'] = ArrayUtils::sanitize($extra);
+        }
+
+        // unset ($this->record['datetime']);
 
         $this->client_id = $client_id?:uniqid();
     }
@@ -117,6 +122,11 @@ class MonologMessage implements MessageInterface {
     public function getSource()
     {
         return NULL;
+    }
+
+    public function getExtra()
+    {
+        return (array)$this->record['context'];
     }
 
     /**

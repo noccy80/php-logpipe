@@ -45,6 +45,8 @@ class LogDumper
 
     protected $squelched = 0;
 
+    protected $timeout = null;
+
     /**
      * @param TransportInterface $transport
      */
@@ -61,6 +63,7 @@ class LogDumper
         $this->dumper = $dumper;
         $dumper->clearDecoders();
         $dumper->addDecoder(new ExceptionDecoder());
+        return $dumper;
     }
 
     /**
@@ -87,6 +90,11 @@ class LogDumper
         $this->squelch_info = $show;
     }
 
+    public function setTimeout($timeout=null)
+    {
+        $this->timeout = $timeout;
+    }
+
     /**
      *
      */
@@ -98,12 +106,19 @@ class LogDumper
 
         $squelched = 0;
 
+        $break_at = ($this->timeout) ? time()+$this->timeout : null;
+
         while (!$signal()) {
 
             $msg = $this->transport->receive();
             if ($msg) {
                 $this->onMessage($msg);
             }
+
+            if ($break_at && ($break_at < time())) {
+                break;
+            }
+
             usleep(10000);
         }
 

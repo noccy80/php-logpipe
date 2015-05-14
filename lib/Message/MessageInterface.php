@@ -35,6 +35,8 @@ interface MessageInterface {
      */
     public function getData();
 
+    public function getExtra();
+
     /**
      * @param array $data
      * @return mixed

@@ -50,6 +50,8 @@ class InteractiveLogDumper extends LogDumper
 
         $this->squelched = 0;
 
+        $break_at = ($this->timeout) ? time()+$this->timeout : null;
+
         while (!$signal()) {
 
             if ($this->getOption("output.title")) { $this->updateTitle(); }
@@ -58,9 +60,15 @@ class InteractiveLogDumper extends LogDumper
             if ($msg) {
                 $this->onMessage($msg);
             }
+
             if (!$this->handleInput($input)) {
                 break;
             }
+
+            if ($break_at && ($break_at < time())) {
+                break;
+            }
+
             usleep(10000);
         }
     }

@@ -14,6 +14,8 @@ use Symfony\Component\Console\Output\OutputInterface;
 use NoccyLabs\LogPipe\Transport\TransportFactory;
 use NoccyLabs\LogPipe\Dumper\ConsoleDumper;
 use NoccyLabs\LogPipe\Application\LogDumper\LogDumper;
+use NoccyLabs\LogPipe\Metrics\MetricsLog;
+use NoccyLabs\LogPipe\Decoder\MetricsDecoder;
 
 /**
  * Class DumpLogCommand
@@ -42,15 +44,21 @@ class DumpLogCommand extends AbstractCommand
     {
         $this->setName($this->cmdname);
         $this->setDescription("Listen for and start dumping incoming events");
+
         $this->addArgument("endpoint", InputArgument::OPTIONAL, "The endpoint or pipe to dump", DEFAULT_ENDPOINT);
-        $this->addOption("level", "l", InputOption::VALUE_REQUIRED, "Minimum level for a log event to be displayed", 100);
-        $this->addOption("channels", "c", InputOption::VALUE_REQUIRED, "The channels to include (comma-separated)");
-        $this->addOption("exclude", "x", InputOption::VALUE_REQUIRED, "The channels to exclude (comma-separated)");
-        $this->addOption("no-squelch", "s", InputOption::VALUE_NONE, "Don't show the number of squelched messages");
-        $this->addOption("config", "C", InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY, "Configuration to pass on to the log dumper");
-        $this->addOption("interactive", "i", InputOption::VALUE_NONE, "Allow searching and executing commands while dumping");
+
+        $this->addOption("level",       "l", InputOption::VALUE_REQUIRED,   "Minimum level for a log event to be displayed", 100);
+        $this->addOption("channels",    "c", InputOption::VALUE_REQUIRED,   "The channels to include (comma-separated)");
+        $this->addOption("exclude",     "x", InputOption::VALUE_REQUIRED,   "The channels to exclude (comma-separated)");
+        $this->addOption("no-squelch",  "s", InputOption::VALUE_NONE,       "Don't show the number of squelched messages");
+        $this->addOption("config",      "C", InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY, "Configuration to pass on to the log dumper");
+        $this->addOption("interactive", "i", InputOption::VALUE_NONE,       "Allow searching and executing commands while dumping");
+        $this->addOption("metrics",     "m", InputOption::VALUE_REQUIRED,   "Capture metrics to the specified file for later processing");
+        $this->addOption("timeout",     null,InputOption::VALUE_REQUIRED,   "Stop running after the specified number of seconds");
+
         //$this->addOption("output", "o", InputOption::VALUE_REQUIRED, "Write the complete log to file");
         //$this->addOption("tee", "t", InputOption::VALUE_REQUIRED, "Write the filtered log to file");
+
         $this->setHelp(self::HELP);
     }
 
@@ -84,6 +92,7 @@ class DumpLogCommand extends AbstractCommand
             $config_opts[$key] = $value;
         }
 
+
         if ($this->input->getOption("interactive")) {
             $log_dumper = new InteractiveLogDumper($config_opts);
         } else {
@@ -91,9 +100,24 @@ class DumpLogCommand extends AbstractCommand
         }
         $log_dumper->setTransport($transport);
         $log_dumper->setDumper($dumper);
+
+        // Set up the metrics dumper to log data if -m is specified
+        if (($metrics_file = $this->input->getOption("metrics"))) {
+            $metrics_log = new MetricsLog($metrics_file, "w");
+        } else {
+            $metrics_log = null;
+        }
+        $metrics_decoder = new MetricsDecoder($metrics_log);
+        $dumper->addDecoder($metrics_decoder);
+
         $log_dumper->setFilter($filter);
         $log_dumper->setOutput($this->output);
         $log_dumper->setShowSquelchInfo(!$this->input->getOption("no-squelch"));
+
+        if (($timeout = $this->input->getOption("timeout"))) {
+            $log_dumper->setTimeout($timeout);
+        }
+
         $log_dumper->run();
 
 

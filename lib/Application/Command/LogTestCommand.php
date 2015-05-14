@@ -64,6 +64,11 @@ class LogTestCommand extends AbstractCommand
 
         $logger->error(new \Exception("Derp"));
 
+        $logger->info("!metric.log page.hit", [ "route"=>"homepage" ]);
+        $logger->info("!metric.log data.written", [ "records"=>13, "failed"=>0, "duration"=>199.7, "size"=>445032 ]);
+        $logger->info("!metric.log feature-use", [ "privacy"=>true, "notifications"=>["email"=>true, "mobile"=>true, "desktop"=>false ]]);
+        $logger->info("!metric.item page.hit.simple homepage");
+
     }
 
     const HELP_TEXT = <<<EOT
