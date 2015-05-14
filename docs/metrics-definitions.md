@@ -6,7 +6,8 @@ the processed metrics.
 
 ## Definitions
 
-The definitions are created using yaml.
+The definitions are created using yaml and specify aggreations and transformations to perform
+on the data.
 
 ### Metrics for examples
 
@@ -19,9 +20,12 @@ The definitions are created using yaml.
 ### Example definitions
 
     page.hit:
-        aggregate: { group:route }
+        group:
+            by: route
     login.timer:
-        aggregate: { stats:true, values:true }
+        aggregate:
+            values: true
+            stats: true
 
 ### Example output
 
@@ -46,5 +50,47 @@ The definitions are created using yaml.
         average: 166.1
         max: 198.4
         min: 159.9
+
+## Reference
+
+Each definition consist of a key (normally the key to match in the metrics), and a body:
+
+    <key-name>:
+        <body>
+
+The body defines the operations to perform on the data:
+
+
+### Grouping and Sorting
+
+    group: { by: <data-key>, values: <bool> }
+    sort: [ <sort-key[:<order>]>, ... ]
+
+**Example:**
+
+    page.hit:
+        group:
+            by: route
+        sort:
+            - route:asc
+
+### Including values
+
+    values: [ <data-key>, ... ]
+
+**Example:**
+
+    page.hit:
+        values: [ route, timer, status ]
+
+### Aggregating stats
+
+    aggregate: { <operation>: <operation-params>, ... }
+
+**Example:**
+
+    page.hit:
+        aggregate:
+            stats: [ timer ]
 
 

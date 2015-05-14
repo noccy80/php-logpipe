@@ -45,14 +45,14 @@ For more information, see [metrics-format.md](metrics-format.md).
 
 Logging from shell scripts is as simple. Put this in `logpipe.inc`:
 
-    function info   { logpipe write --channel $(basename $0) --info    "$1"; }
-    function debug  { logpipe write --channel $(basename $0) --debug   "$1"; }
-    function warn   { logpipe write --channel $(basename $0) --warning "$1"; }
-    function error  { logpipe write --channel $(basename $0) --error   "$1"; }
+    function log.info   { logpipe write --channel $(basename $0) --info    "$1"; }
+    function log.debug  { logpipe write --channel $(basename $0) --debug   "$1"; }
+    function log.warn   { logpipe write --channel $(basename $0) --warning "$1"; }
+    function log.error  { logpipe write --channel $(basename $0) --error   "$1"; }
 
 Then source it into your script:
 
     #!/bin/bash
     source logpipe.inc
-    info "Processing foo"
+    log.info "Processing foo"
     
