@@ -103,8 +103,9 @@ class LogDumper
             $msg = $this->transport->receive();
             if ($msg) {
                 $this->onMessage($msg);
+            } else {
+                usleep(10000);
             }
-            usleep(10000);
         }
 
     }
