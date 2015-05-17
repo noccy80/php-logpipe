@@ -3,6 +3,7 @@
 
 namespace NoccyLabs\LogPipe\Filter;
 
+use NoccyLabs\LogPipe\Dumper\Filter\MessageFilter;
 use NoccyLabs\LogPipe\Message\MessageInterface;
 use NoccyLabs\LogPipe\Message\MonologMessage;
 

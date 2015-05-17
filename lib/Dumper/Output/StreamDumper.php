@@ -1,16 +1,17 @@
 <?php
 
 
-namespace NoccyLabs\LogPipe\Dumper;
+namespace NoccyLabs\LogPipe\Dumper\Output;
 
 
+use NoccyLabs\LogPipe\Dumper\Formatter\Formatter;
 use NoccyLabs\LogPipe\Message\MessageInterface;
 
 /**
  * Class StreamDumper
  * @package NoccyLabs\LogPipe\Dumper
  */
-class StreamDumper {
+class StreamDumper extends AbstractDumper {
 
     /**
      * @param $output

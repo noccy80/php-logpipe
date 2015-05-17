@@ -1,7 +1,7 @@
 <?php
 
 
-namespace NoccyLabs\LogPipe\Dumper;
+namespace NoccyLabs\LogPipe\Dumper\Formatter;
 
 use NoccyLabs\LogPipe\Message\MessageInterface;
 

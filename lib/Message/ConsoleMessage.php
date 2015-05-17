@@ -2,7 +2,7 @@
 
 namespace NoccyLabs\LogPipe\Message;
 
-use NoccyLabs\LogPipe\Dumper\Formatter;
+use NoccyLabs\LogPipe\Dumper\Formatter\Formatter;
 
 /**
  * Class that wraps a simple message for serialization

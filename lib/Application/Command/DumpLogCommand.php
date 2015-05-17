@@ -4,15 +4,15 @@ namespace NoccyLabs\LogPipe\Application\Command;
 
 use NoccyLabs\LogPipe\Application\InputHelper;
 use NoccyLabs\LogPipe\Application\LogDumper\InteractiveLogDumper;
-use NoccyLabs\LogPipe\Dumper\Formatter;
-use NoccyLabs\LogPipe\Filter\MessageFilter;
+use NoccyLabs\LogPipe\Dumper\Formatter\Formatter;
+use NoccyLabs\LogPipe\Dumper\Filter\MessageFilter;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use NoccyLabs\LogPipe\Transport\TransportFactory;
-use NoccyLabs\LogPipe\Dumper\ConsoleDumper;
+use NoccyLabs\LogPipe\Dumper\Output\ConsoleDumper;
 use NoccyLabs\LogPipe\Application\LogDumper\LogDumper;
 
 /**
