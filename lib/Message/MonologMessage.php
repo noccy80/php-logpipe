@@ -2,8 +2,8 @@
 
 namespace NoccyLabs\LogPipe\Message;
 
-use NoccyLabs\LogPipe\Dumper\Formatter;
 use NoccyLabs\LogPipe\Common\ArrayUtils;
+use NoccyLabs\LogPipe\Dumper\Formatter\Formatter;
 
 /**
  * Class that wraps a Monolog record for serialization

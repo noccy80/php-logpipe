@@ -5,7 +5,7 @@ namespace NoccyLabs\LogPipe\Application\LogDumper;
 use NoccyLabs\LogPipe\Message\MessageInterface;
 use NoccyLabs\LogPipe\Posix\SignalListener;
 use NoccyLabs\LogPipe\Transport\TransportInterface;
-use NoccyLabs\LogPipe\Filter\FilterInterface;
+use NoccyLabs\LogPipe\Dumper\Filter\FilterInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use NoccyLabs\LogPipe\Common\FifoBuffer;
 use NoccyLabs\LogPipe\Decoder\ExceptionDecoder;
@@ -67,7 +67,7 @@ class LogDumper
     }
 
     /**
-     * @param FilterInterface $filter
+     * @param \NoccyLabs\LogPipe\Dumper\Filter\FilterInterface $filter
      */
     public function setFilter(FilterInterface $filter)
     {

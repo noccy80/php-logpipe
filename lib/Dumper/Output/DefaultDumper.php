@@ -1,6 +1,7 @@
 <?php
 
-namespace NoccyLabs\LogPipe\Dumper;
+namespace NoccyLabs\LogPipe\Dumper\Output;
+use NoccyLabs\LogPipe\Dumper\AbstractDumper;
 use NoccyLabs\LogPipe\Message\MessageInterface;
 
 /**

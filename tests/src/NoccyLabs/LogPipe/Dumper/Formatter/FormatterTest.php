@@ -5,7 +5,7 @@ namespace NoccyLabs\LogPipe\Dumper;
 
 use NoccyLabs\LogPipe\Message\MonologMessage;
 use NoccyLabs\LogPipe\Message\ConsoleMessage;
-use NoccyLabs\LogPipe\Dumper\Formatter;
+use NoccyLabs\LogPipe\Dumper\Formatter\Formatter;
 
 class FormatterTest extends \PHPUnit_Framework_TestCase
 {

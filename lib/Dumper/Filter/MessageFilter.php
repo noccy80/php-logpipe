@@ -1,8 +1,9 @@
 <?php
 
 
-namespace NoccyLabs\LogPipe\Filter;
+namespace NoccyLabs\LogPipe\Dumper\Filter;
 
+use NoccyLabs\LogPipe\Dumper\Filter\FilterInterface;
 use NoccyLabs\LogPipe\Message\MessageInterface;
 
 class MessageFilter implements FilterInterface {

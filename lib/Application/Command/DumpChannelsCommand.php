@@ -9,7 +9,7 @@ use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use NoccyLabs\LogPipe\Transport\TransportFactory;
-use NoccyLabs\LogPipe\Dumper\ConsoleDumper;
+use NoccyLabs\LogPipe\Dumper\Output\ConsoleDumper;
 
 /**
  * Class DumpChannelsCommand
