@@ -21,7 +21,7 @@ class MessageFilterTest extends \PhpUnit_Framework_TestCase {
      */
     public function testThatTheFilterDoesNotBlockByDefault($message)
     {
-        $out = $this->filter->filterMessage($message);
+        $out = $this->filter->filterMessage($message,false);
         $this->assertNotNull($out);
     }
 

@@ -112,12 +112,9 @@ class MessageFilter implements FilterInterface {
     }
 
     /**
-     * Filter a message and return NULL if the message is to be discarded.
-     *
-     * @param $message
-     * @return mixed
+     * {@inheritdoc}
      */
-    public function filterMessage(MessageInterface $message)
+    public function filterMessage(MessageInterface $message, $filtered)
     {
         if ($this->isChannelFiltered($message->getChannel())) {
             return NULL;

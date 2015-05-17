@@ -3,7 +3,6 @@
 namespace NoccyLabs\LogPipe\Dumper\Output;
 
 use NoccyLabs\LogPipe\Dumper\Formatter\Formatter;
-use NoccyLabs\LogPipe\Dumper\Output\AbstractDumper;
 use NoccyLabs\LogPipe\Message\MessageInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 

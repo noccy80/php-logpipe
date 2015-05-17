@@ -16,6 +16,11 @@ class Formatter {
      */
     protected $message_style;
 
+    public function __construct($message_style=null)
+    {
+        $this->setMessageStyle($message_style);
+    }
+
     /**
      * @param $style
      * @return $this

@@ -77,7 +77,7 @@ class LogPipeHandler extends AbstractProcessingHandler
     /**
      *
      */
-    private function initialize()
+    protected function initialize()
     {
         if ($this->transport_uri instanceof TransportInterface) {
             $this->transport = $this->transport_uri;
