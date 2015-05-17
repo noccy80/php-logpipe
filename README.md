@@ -196,6 +196,9 @@ platforms may encounter issues.
     0.2.5   [!] Reduced memory load when using the standard (non-interactive) dumper by moving
                 the buffer and configuration logic to the interactive dumper.
             [+] Exceptions are now unwrapped and displayed in a more useful format.
+            [!] Dumping should now lag less when a lot of data is received
+            [+] Added --timeout option to dump command to limit execution time for scripting
+            [+] Implemented metrics logging in the dumper (not yet in master)
     0.2.4   [!] CPU load during dumping reducded
     0.2.3   [*] The PipeV1Protocol header increased to 16 bytes.
             [+] Separated the standard dumper and the interactive dumper.

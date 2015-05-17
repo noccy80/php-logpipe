@@ -38,7 +38,7 @@ class MetricsDecoder implements DecoderInterface
             $data = [ 'value'=>$match[2] ];
         }
 
-        $data['_timestamp'] = $message->getTimestamp()->format("U");
+        $data['_timestamp'] = $message->getTimestamp();
 
         $this->metrics->log($message->getClientId(), $key, $data);
 

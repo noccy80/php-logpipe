@@ -1,36 +1,27 @@
 <?php
 
 namespace NoccyLabs\LogPipe\Dumper;
+use NoccyLabs\LogPipe\Message\MessageInterface;
 
 /**
  * Class DefaultDumper
  * @package NoccyLabs\LogPipe\Dumper
  */
-class DefaultDumper
+class DefaultDumper extends AbstractDumper
 {
     /**
      * @param array $record
      */
-    public function dump(array $record)
+    public function dump(MessageInterface $message)
     {
-        $channel    = $record['channel'];
-        $level      = $record['level'];
-        $message    = $record['message'];
-        $time       = $record['time'];
-        $client     = $record['client_id'];
+        $client     = $message->getClientId();
 
-        if ($level < 300) {
-            $style = "\e[32;1m";
-        } elseif ($level < 400) {
-            $style = "\e[33;1m";
-        } else {
-            $style = "\e[31;1m";
+        $message = $this->decode($message);
+        if (!$message) {
+            return;
         }
-        $nostyle = "\e[0m";
-        $bold = "\e[1m";
-        $nobold = "\e[21m";
-        printf("%s {$style}%s{$nostyle}\n",
-            $client, rtrim($message));
-        //echo join(",", array_keys($record)) . "\n";
+
+        printf("%s %s\n",
+            $client, (string)$message);
     }
 }

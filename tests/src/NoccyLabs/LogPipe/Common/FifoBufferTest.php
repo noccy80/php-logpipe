@@ -2,6 +2,8 @@
 
 namespace NoccyLabs\LogPipe\Application\Buffer;
 
+use NoccyLabs\LogPipe\Common\FifoBuffer;
+
 class FifoBufferTest extends \PhpUnit_Framework_TestCase
 {
     public function setup()

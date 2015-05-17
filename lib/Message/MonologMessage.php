@@ -36,6 +36,9 @@ class MonologMessage implements MessageInterface {
             $extra = array_key_exists('context', $this->record) ? $this->record['context'] : [];
             $this->record['context'] = ArrayUtils::sanitize($extra);
         }
+        if (isset($this->record['datetime'])) {
+            $this->record['datetime'] = $this->record['datetime']->format('U');
+        }
 
         // unset ($this->record['datetime']);
 

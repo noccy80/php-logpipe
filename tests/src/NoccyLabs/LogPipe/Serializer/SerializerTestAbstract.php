@@ -4,6 +4,7 @@ namespace NoccyLabs\LogPipe\Serializer;
 
 use NoccyLabs\LogPipe\Message\MonologMessage;
 use NoccyLabs\LogPipe\Message\ConsoleMessage;
+use NoccyLabs\LogPipe\Common\ArrayUtils;
 
 abstract class SerializerTestAbstract extends \PhpUnit_Framework_TestCase
 {

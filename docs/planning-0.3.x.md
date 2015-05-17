@@ -4,6 +4,29 @@ LogPipe Planing: 0.3.x
 
 
 
+## Metrics
+
+### Through Monolog
+
+    $logger->info("metrics.hit", [ "client_records.created" ]);
+
+### Through Metrics
+
+    $metrics = $container->get("logpipe.metrics");
+    $metrics->hit("client_records.created");
+    
+### Dumping
+
+While dumping log output:
+
+    $ logpipe dump --trace-metrics trace.db
+
+To process:
+
+    $ logpipe metrics:dump trace.db
+
+
+
 ## Interactive Dumper
 
 ### New commands

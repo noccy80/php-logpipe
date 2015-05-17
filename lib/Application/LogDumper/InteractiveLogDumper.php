@@ -9,7 +9,7 @@ use NoccyLabs\LogPipe\Transport\TransportInterface;
 use NoccyLabs\LogPipe\Filter\FilterInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use NoccyLabs\LogPipe\Application\Console\CharacterInput;
-use NoccyLabs\LogPipe\Application\Buffer\FifoBuffer;
+use NoccyLabs\LogPipe\Common\FifoBuffer;
 
 class InteractiveLogDumper extends LogDumper
 {
@@ -69,7 +69,9 @@ class InteractiveLogDumper extends LogDumper
                 break;
             }
 
-            usleep(10000);
+            if (!$msg) {
+                usleep(10000);
+            }
         }
     }
 

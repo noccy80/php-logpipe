@@ -1,6 +1,6 @@
 <?php
 
-namespace NoccyLabs\LogPipe\Application\Buffer;
+namespace NoccyLabs\LogPipe\Common;
 
 /**
  * Addressable and countable fifo-buffer

@@ -7,7 +7,7 @@ use NoccyLabs\LogPipe\Posix\SignalListener;
 use NoccyLabs\LogPipe\Transport\TransportInterface;
 use NoccyLabs\LogPipe\Filter\FilterInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use NoccyLabs\LogPipe\Application\Buffer\FifoBuffer;
+use NoccyLabs\LogPipe\Common\FifoBuffer;
 use NoccyLabs\LogPipe\Decoder\ExceptionDecoder;
 use NoccyLabs\LogPipe\Decoder\MetricsDecoder;
 
@@ -113,13 +113,14 @@ class LogDumper
             $msg = $this->transport->receive();
             if ($msg) {
                 $this->onMessage($msg);
+            } else {
+                usleep(10000);
             }
 
             if ($break_at && ($break_at < time())) {
                 break;
             }
 
-            usleep(10000);
         }
 
     }

@@ -1,0 +1,12 @@
+
+
+# This is the number of time it took to calculate 100 values. Calculate
+# some statistics on these numbers
+prime.timer.per100:
+    aggregate: { statistics:true }
+
+# These are the found primes. We want them as an array of values
+prime.found:
+    value: [ 'value' ]
+
+
