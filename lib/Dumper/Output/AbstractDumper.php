@@ -2,7 +2,7 @@
 
 namespace NoccyLabs\LogPipe\Dumper\Output;
 
-use NoccyLabs\LogPipe\Decoder\DecoderInterface;
+use NoccyLabs\LogPipe\Dumper\Decoder\DecoderInterface;
 use NoccyLabs\LogPipe\Message\MessageInterface;
 
 abstract class AbstractDumper
@@ -12,8 +12,8 @@ abstract class AbstractDumper
     /**
      *
      *
-     * @param DecoderInterface $decoder The decoder to add
-     * @return DecoderInterface The added decoder
+     * @param \NoccyLabs\LogPipe\Dumper\Decoder\DecoderInterface $decoder The decoder to add
+     * @return \NoccyLabs\LogPipe\Dumper\Decoder\DecoderInterface The added decoder
      */
     public function addDecoder(DecoderInterface $decoder)
     {

@@ -1,7 +1,8 @@
 <?php
 
-namespace NoccyLabs\LogPipe\Decoder;
+namespace NoccyLabs\LogPipe\Dumper\Decoder;
 
+use NoccyLabs\LogPipe\Dumper\Decoder\DecoderInterface;
 use NoccyLabs\LogPipe\Message\MessageInterface;
 use NoccyLabs\LogPipe\Metrics\MetricsLog;
 

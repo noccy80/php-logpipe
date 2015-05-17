@@ -15,7 +15,7 @@ use NoccyLabs\LogPipe\Transport\TransportFactory;
 use NoccyLabs\LogPipe\Dumper\Output\ConsoleDumper;
 use NoccyLabs\LogPipe\Application\LogDumper\LogDumper;
 use NoccyLabs\LogPipe\Metrics\MetricsLog;
-use NoccyLabs\LogPipe\Decoder\MetricsDecoder;
+use NoccyLabs\LogPipe\Dumper\Decoder\MetricsDecoder;
 
 /**
  * Class DumpLogCommand

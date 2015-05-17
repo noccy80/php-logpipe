@@ -4,7 +4,7 @@
 namespace NoccyLabs\LogPipe\Dumper;
 
 
-use NoccyLabs\LogPipe\Decoder\DecoderInterface;
+use NoccyLabs\LogPipe\Dumper\Decoder\DecoderInterface;
 use NoccyLabs\LogPipe\Dumper\Filter\ExpressionFilter;
 use NoccyLabs\LogPipe\Dumper\Filter\FilterInterface;
 use NoccyLabs\LogPipe\Dumper\Filter\UserFilter;
@@ -51,7 +51,7 @@ class Dumper
     protected $transports = [];
 
     /**
-     * @var DecoderInterface[] Decoders
+     * @var \NoccyLabs\LogPipe\Dumper\Decoder\DecoderInterface[] Decoders
      */
     protected $decoders = [];
 
@@ -78,33 +78,55 @@ class Dumper
     /**
      * @param FilterInterface $filter
      */
-    public function addFilter(FilterInterface $filter)
+    public function addFilter(FilterInterface $filter, $priority=0)
     {
-        $this->filters[] = $filter;
+        $this->filters[] = [ $priority, $filter ];
+        uasort(
+            $this->filters,
+            function ($a, $b) {
+                return $a[0]-$b[0];
+            });
     }
 
     /**
      * @param callable $filter_func
      */
-    public function addUserFilter(callable $filter_func)
+    public function addUserFilter(callable $filter_func, $priority=0)
     {
-        $this->filters[] = new UserFilter($filter_func);
+        $filter = new UserFilter($filter_func);
+        $this->filters[] = [ $priority, $filter ];
+        uasort(
+            $this->filters,
+            function ($a, $b) {
+                return $a[0]-$b[0];
+            });
     }
 
     /**
      * @param $expression
      */
-    public function addExpressionFilter($expression)
+    public function addExpressionFilter($expression, $priority=0)
     {
-        $this->filters[] = new ExpressionFilter($expression);
+        $filter = new ExpressionFilter($expression);
+        $this->filters[] = [ $priority, $filter ];
+        uasort(
+            $this->filters,
+            function ($a, $b) {
+                return $a[0]-$b[0];
+            });
     }
 
     /**
      * @param DecoderInterface $decoder
      */
-    public function addDecoder(DecoderInterface $decoder)
+    public function addDecoder(DecoderInterface $decoder, $priority=0)
     {
-        $this->decoders[] = $decoder;
+        $this->decoders[] = [ $priority, $decoder ];
+        uasort(
+            $this->decoders,
+            function ($a, $b) {
+                return $a[0]-$b[0];
+            });
     }
 
     /**
@@ -123,7 +145,7 @@ class Dumper
         // Filters return true or false, with false indicating the message should be discarded
         $filtered = false;
         foreach ($this->filters as $filter) {
-            if (!$filter->filterMessage($message, $filtered)) {
+            if (!$filter[1]->filterMessage($message, $filtered)) {
                 $filtered = true;
             }
         }
@@ -134,7 +156,7 @@ class Dumper
         // Decoders will always receive all messages, and can have them discarded after processing by returning false
         $discard = false;
         foreach ($this->decoders as $decoder) {
-            $decoded = $decoder->decode($message);
+            $decoded = $decoder[1]->decode($message);
             if (false === $decoded) {
                 $discard = true;
             } else {

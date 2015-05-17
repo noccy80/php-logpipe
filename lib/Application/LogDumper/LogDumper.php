@@ -8,8 +8,8 @@ use NoccyLabs\LogPipe\Transport\TransportInterface;
 use NoccyLabs\LogPipe\Dumper\Filter\FilterInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use NoccyLabs\LogPipe\Common\FifoBuffer;
-use NoccyLabs\LogPipe\Decoder\ExceptionDecoder;
-use NoccyLabs\LogPipe\Decoder\MetricsDecoder;
+use NoccyLabs\LogPipe\Dumper\Decoder\ExceptionDecoder;
+use NoccyLabs\LogPipe\Dumper\Decoder\MetricsDecoder;
 
 /**
  * Class LogDumper

@@ -1,6 +1,6 @@
 <?php
 
-namespace NoccyLabs\LogPipe\Decoder;
+namespace NoccyLabs\LogPipe\Dumper\Decoder;
 
 use NoccyLabs\LogPipe\Message\MessageInterface;
 
