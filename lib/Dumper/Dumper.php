@@ -59,25 +59,29 @@ class Dumper
      * Create a transport from a URI
      *
      * @param null $endpoint
+     * @return TransportInterface
      */
     public function createTransport($endpoint=null)
     {
         $transport = TransportFactory::create($endpoint?:DEFAULT_ENDPOINT);
         $transport->listen();
-        $this->addTransport($transport);
+        return $this->addTransport($transport);
     }
 
     /**
      * @param TransportInterface $transport
+     * @return TransportInterface
      */
     public function addTransport(TransportInterface $transport)
     {
         $this->transports[] = $transport;
+        return $transport;
     }
 
     /**
      * @param FilterInterface $filter
      * @param int $priority Priority of this filter (negative=earlier, positive=later)
+     * @return FilterInterface
      */
     public function addFilter(FilterInterface $filter, $priority=0)
     {
@@ -87,11 +91,13 @@ class Dumper
             function ($a, $b) {
                 return $a[0]-$b[0];
             });
+        return $filter;
     }
 
     /**
      * @param callable $filter_func
      * @param int $priority Priority of this filter (negative=earlier, positive=later)
+     * @return FilterInterface
      */
     public function addUserFilter(callable $filter_func, $priority=0)
     {
@@ -102,11 +108,13 @@ class Dumper
             function ($a, $b) {
                 return $a[0]-$b[0];
             });
+        return $filter;
     }
 
     /**
      * @param $expression
      * @param int $priority Priority of this filter (negative=earlier, positive=later)
+     * @return FilterInterface
      */
     public function addExpressionFilter($expression, $priority=0)
     {
@@ -117,32 +125,39 @@ class Dumper
             function ($a, $b) {
                 return $a[0]-$b[0];
             });
+        return $filter;
     }
 
     /**
      * @param DecoderInterface $decoder
      * @param int $priority Priority of this decoder (negative=earlier, positive=later)
+     * @return DecoderInterface
      */
     public function addDecoder(DecoderInterface $decoder, $priority=0)
     {
-        $this->decoders[] = [ $priority, $decoder ];
+        $decoder = [ $priority, $decoder ];
+        $this->decoders[] = $decoder;
         uasort(
             $this->decoders,
             function ($a, $b) {
                 return $a[0]-$b[0];
             });
+        return $decoder;
     }
 
     /**
      * @param OutputInterface $output
+     * @return OutputInterface
      */
     public function addOutput(OutputInterface $output)
     {
         $this->outputs[] = $output;
+        return $output;
     }
 
     /**
      * @param MessageInterface $message
+     * @return bool
      */
     public function dumpMessage(MessageInterface $message)
     {
@@ -177,6 +192,8 @@ class Dumper
         foreach ($this->outputs as $output) {
             $output->write($message);
         }
+
+        return true;
     }
 
     /**

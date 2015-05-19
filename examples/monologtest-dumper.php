@@ -7,10 +7,8 @@ use Monolog\Logger;
 use Monolog\Handler\StreamHandler;
 use NoccyLabs\LogPipe\Dumper\Output\DefaultDumper;
 
-$transport = TransportFactory::create("udp:127.0.0.1:6999");
-echo "Listening...";
+$transport = TransportFactory::create(DEFAULT_ENDPOINT);
 $transport->listen();
-echo "Ok\n";
 $dumper = new DefaultDumper();
 
 while (true) {

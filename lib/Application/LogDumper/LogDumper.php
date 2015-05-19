@@ -127,13 +127,13 @@ class LogDumper
 
     protected function onMessage(MessageInterface $msg)
     {
-        if (($out = $this->filter->filterMessage($msg))) {
+        if (!($this->filter->filterMessage($msg, false))) {
             if (($this->squelched > 0) && ($this->squelch_info)) {
                 $this->output->writeln("\r<fg=black;bg=yellow> {$this->squelched}</fg=black;bg=yellow><fg=black;bg=yellow;options=bold> messages squelched </fg=black;bg=yellow;options=bold>");
                 $this->squelched = 0;
             }
             $this->output->write("\r\e[K");
-            $this->dumper->dump($out);
+            $this->dumper->dump($msg);
         } else {
             $this->squelched++;
             if ($this->squelch_info) {
