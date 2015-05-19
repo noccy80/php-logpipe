@@ -1,8 +1,6 @@
 <?php
 
-namespace NoccyLabs\LogPipe\Application\Buffer;
-
-use NoccyLabs\LogPipe\Common\FifoBuffer;
+namespace NoccyLabs\LogPipe\Common;
 
 class FifoBufferTest extends \PhpUnit_Framework_TestCase
 {

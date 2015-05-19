@@ -4,7 +4,7 @@
 namespace NoccyLabs\LogPipe\Common;
 
 
-class ConfigurationString {
+class Configuration {
 
     protected $options;
 
@@ -12,9 +12,9 @@ class ConfigurationString {
 
     protected $resource;
 
-    public function __construct($uri)
+    public function __construct($uri=null)
     {
-        $this->parseString($uri);
+        $this->parseString($uri?:DEFAULT_ENDPOINT);
     }
 
     public function parseString($uri)

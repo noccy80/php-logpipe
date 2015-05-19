@@ -97,7 +97,7 @@ class MessageFilter implements FilterInterface {
             throw new \InvalidArgumentException("Invalid log level {$level}. Expected numeric 0-600 or one of ".join(", ", array_keys(self::$level_map)));
         }
 
-        $this->level = $level;
+        $this->minimum_level = $level;
         return $this;
     }
 
@@ -117,14 +117,14 @@ class MessageFilter implements FilterInterface {
     public function filterMessage(MessageInterface $message, $filtered)
     {
         if ($this->isChannelFiltered($message->getChannel())) {
-            return NULL;
+            return true;
         }
 
         if ($this->isLevelFiltered($message->getLevel())) {
-            return NULL;
+            return true;
         }
 
-        return $message;
+        return false;
     }
 
     public function isChannelFiltered($channel)

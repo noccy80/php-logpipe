@@ -28,7 +28,6 @@ class ValueProcessor implements ProcessorInterface
             if ($this->columns === true) {
                 $this->result[] = $record->data;
             } else {
-                $result_item = [];
                 foreach ($this->columns as $colname) {
                     if (!empty($record->data->{$colname})) {
                         if (!array_key_exists($colname, $this->result)) {

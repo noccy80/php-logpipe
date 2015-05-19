@@ -4,6 +4,7 @@ namespace NoccyLabs\LogPipe\Application\Command;
 
 use NoccyLabs\LogPipe\Application\InputHelper;
 use NoccyLabs\LogPipe\Application\LogDumper\InteractiveLogDumper;
+use NoccyLabs\LogPipe\Common\StringBuilder;
 use NoccyLabs\LogPipe\Dumper\Formatter\Formatter;
 use NoccyLabs\LogPipe\Dumper\Filter\MessageFilter;
 use Symfony\Component\Console\Command\Command;
@@ -55,12 +56,13 @@ class DumpLogCommand extends AbstractCommand
         $this->addOption("interactive", "i", InputOption::VALUE_NONE,       "Allow searching and executing commands while dumping");
         $this->addOption("metrics",     "m", InputOption::VALUE_REQUIRED,   "Capture metrics to the specified file for later processing");
         $this->addOption("timeout",     null,InputOption::VALUE_REQUIRED,   "Stop running after the specified number of seconds");
+        $this->addOption("filter",      "f", InputOption::VALUE_REQUIRED|InputOption::VALUE_IS_ARRAY, "Filter expressions");
 
         //$this->addOption("output", "o", InputOption::VALUE_REQUIRED, "Write the complete log to file");
         //$this->addOption("tee", "t", InputOption::VALUE_REQUIRED, "Write the filtered log to file");
 
-        $this->setHelp(self::HELP);
     }
+
 
     /**
      * {@inheritdoc}
@@ -125,41 +127,4 @@ class DumpLogCommand extends AbstractCommand
 
     }
 
-    const HELP = <<<TEXT
-This command will create a listener on the specified endpoint and start dumping events as
-they arrive. The default endpoint is <info>udp:127.0.0.1:6999</info> but it can be overridden on
-the command line.
-
-To listen for log messages over UDP on all interfaces on port 12345:
-
-    $ <comment>logpipe dump udp:0.0.0.0:12345</comment>
-
-To restrict the level of messages being displayed, use the <info>--level</info> option:
-
-    $ <comment>logpipe dump --level debug</comment>
-
-To use the interactive dumper, which keeps the last bunch of messages in a searchable buffer,
-pass the <info>-i</info> or <info>--interactive</info> option:
-
-    $ <comment>logpipe dump -i</comment>
-
-Channels can be used for filtering as well. If the <info>--channels</info> option is specified, it will take
-precedence, and only channels matching will be displayed disregarding <info>--exclude</info> if provided.
-
-To dump only the channel monolog:
-
-    $ <comment>logpipe dump --channels monolog</comment>
-
-To dump EVERYTHING EXCEPT the channel monolog:
-
-    $ <comment>logpipe dump --exclude monolog</comment>
-
-To exclude both monolog and event:
-
-    $ <comment>logpipe dump -x monolog,event</comment>
-
-The <info>--no-squelch</info> option is available to hide the notification about the number of squelched
-messages.
-
-TEXT;
 }

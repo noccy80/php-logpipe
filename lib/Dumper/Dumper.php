@@ -77,6 +77,7 @@ class Dumper
 
     /**
      * @param FilterInterface $filter
+     * @param int $priority Priority of this filter (negative=earlier, positive=later)
      */
     public function addFilter(FilterInterface $filter, $priority=0)
     {
@@ -90,6 +91,7 @@ class Dumper
 
     /**
      * @param callable $filter_func
+     * @param int $priority Priority of this filter (negative=earlier, positive=later)
      */
     public function addUserFilter(callable $filter_func, $priority=0)
     {
@@ -104,6 +106,7 @@ class Dumper
 
     /**
      * @param $expression
+     * @param int $priority Priority of this filter (negative=earlier, positive=later)
      */
     public function addExpressionFilter($expression, $priority=0)
     {
@@ -118,6 +121,7 @@ class Dumper
 
     /**
      * @param DecoderInterface $decoder
+     * @param int $priority Priority of this decoder (negative=earlier, positive=later)
      */
     public function addDecoder(DecoderInterface $decoder, $priority=0)
     {

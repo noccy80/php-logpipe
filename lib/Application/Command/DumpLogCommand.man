@@ -1,0 +1,61 @@
+This command will create a listener on the specified endpoint and start dumping events as they arrive. 
+The default endpoint is <arguments>{DEFAULT_ENDPOINT}</arguments> but it can be overridden on 
+the command line.
+
+  To listen for log messages over UDP on all interfaces on port 12345:
+
+      $ <command>logpipe dump</command> <arguments>udp:0.0.0.0:12345</arguments>
+
+  To use the interactive dumper, which keeps the last bunch of messages in a searchable buffer, pass the 
+  <arguments>-i</arguments> or <arguments>--interactive</arguments> option:
+
+      $ <command>logpipe dump</command> <arguments>-i</arguments>
+
+<header>Options</header>
+
+  <arguments>--filter</arguments> <value>expr</value>, <arguments>-f</arguments> <value>expr</value>
+
+    This option will apply a filter expression to the messages being dumped. Only messages that match the 
+    expression will be displayed. The filter strings should be valid <comment>Symfony ExpressionLanguage</comment> 
+    expressions.
+
+  <arguments>--metrics</arguments> <value>file</value>, <arguments>-m</arguments> <value>file</value>
+
+    This option enables dumping of metrics samples transported via Monolog or similar.
+
+<header>Filters:</header>
+
+  You can filter messages to only include messages matching one or more expressions. If more than one 
+  expression is provided, they are effectively ANDed as the first filter feeds into the next one and so on.
+
+Examples:
+
+  <comment>Filter by level</comment>
+
+      $ <command>logpipe dump</command> <arguments>-l 300</arguments> (or <arguments>--level</arguments>)
+      $ <command>logpipe dump</command> <arguments>-l notice</arguments>
+      $ <command>logpipe dump</command> <arguments>-f "message.level >= 300"</arguments>
+      $ <command>logpipe dump</command> <arguments>-f "message.level >= notice"</arguments>
+
+  <comment>Only show specific channels</comment>
+
+      $ <command>logpipe dump</command> <arguments>-c channela,channelb</arguments> (or <arguments>--channel</arguments>)
+      $ <command>logpipe dump</command> <arguments>-f "message.channel in ['channela','channelb']"</arguments>
+
+  <comment>Exclude specific channels</comment>
+
+      $ <command>logpipe dump</command> <arguments>-x channela,channelb</arguments> (or <arguments>--exclude</arguments>)
+      $ <command>logpipe dump</command> <arguments>-f "not (message.channel in ['channela','channelb'])"</arguments>
+
+  <comment>Filter by message contents</comment>
+
+      $ <command>logpipe dump</command> <arguments>-f "message.text matches '/meltdown/i'"</arguments>
+
+<header>Squelching:</header>
+
+When messages are filtered, LogPipe will tell you about this by showing the number of "squelched" messages 
+in the format <fg=black;bg=yellow> 42 </fg=black;bg=yellow>, indicating 42 filtered messages. The 
+<arguments>--no-squelch</arguments> option is available to hide this notification.
+
+      $ <command>logpipe dump</command> <arguments>--no-squelch</arguments>
+
