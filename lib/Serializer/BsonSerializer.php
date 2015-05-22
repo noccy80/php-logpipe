@@ -5,14 +5,14 @@ namespace NoccyLabs\LogPipe\Serializer;
 use NoccyLabs\LogPipe\Message\MessageInterface;
 use NoccyLabs\LogPipe\Exception\SerializerException;
 
-class MsgpackSerializer implements SerializerInterface
+class BsonSerializer implements SerializerInterface
 {
     /**
      * {@inheritDoc}
      */
     public function getName()
     {
-        return "msgpack";
+        return "bson";
     }
 
     /**
@@ -20,7 +20,7 @@ class MsgpackSerializer implements SerializerInterface
      */
     public function getTag()
     {
-        return "m";
+        return "b";
     }
 
     /**
@@ -28,7 +28,7 @@ class MsgpackSerializer implements SerializerInterface
      */
     public function isSupported()
     {
-        return (is_callable("msgpack_pack") && is_callable("msgpack_unpack"));
+        return (is_callable("bson_encode") && is_callable("bson_decode"));
     }
 
     /**
@@ -38,9 +38,9 @@ class MsgpackSerializer implements SerializerInterface
     {
         $raw = [ get_class($message), $message->getData() ];
         try {
-            $data = \msgpack_pack($raw);
-        } catch (\Exception $e) {
-            throw new SerializerException("Unable to serialize data", 0, $e);
+            $data = @\bson_encode($raw);
+        } catch (\MongoException $e) {
+            throw new SerializerException("Unable to serialize data");
         }
         return $data;
     }
@@ -51,13 +51,13 @@ class MsgpackSerializer implements SerializerInterface
     public function unserialize($data)
     {
         try {
-            $data = \msgpack_unpack($data);
-        } catch (\Exception $e) {
-            throw new SerializerException("Unable to serialize data", 0, $e);
+            $data = (array)@\bson_decode($data);
+        } catch (\MongoException $e) {
+            throw new SerializerException("Unable to unserialize data");
         }
         $class = $data[0];
         $inst = new $class();
-        $inst->setData($data[1]);
+        $inst->setData((array)$data[1]);
         return $inst;
     }
 }

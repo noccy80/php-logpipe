@@ -24,6 +24,14 @@ class JsonSerializer implements SerializerInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function isSupported()
+    {
+        return (is_callable("json_encode") && is_callable("json_decode"));
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function serialize(MessageInterface $message)

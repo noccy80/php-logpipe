@@ -24,6 +24,14 @@ class PhpSerializer implements SerializerInterface
     }
 
     /**
+     * {@inheritdoc}
+     */
+    public function isSupported()
+    {
+        return true;
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function serialize(MessageInterface $message)

@@ -10,6 +10,7 @@ class SerializerFactory
         "PhpSerializer",
         "JsonSerializer",
         "MsgpackSerializer",
+        "BsonSerializer",
     ];
 
     protected static $serializers = [];
@@ -23,7 +24,9 @@ class SerializerFactory
             $serializer = "NoccyLabs\\LogPipe\\Serializer\\{$serializer}";
             $inst = new $serializer();
             $tag = $inst->getTag();
-            self::$serializers[$tag] = $inst;
+            if ($inst->isSupported()) {
+                self::$serializers[$tag] = $inst;
+            }
         }
 
         $was_setup = true;

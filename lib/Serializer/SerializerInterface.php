@@ -21,4 +21,11 @@ interface SerializerInterface
      * @return mixed The data
      */
     public function unserialize($data);
+
+    /**
+     * Check if the serializer is supported on this system
+     *
+     * @return bool True if the serializer is usable
+     */
+    public function isSupported();
 }
