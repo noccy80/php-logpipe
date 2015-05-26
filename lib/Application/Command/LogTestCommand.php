@@ -34,7 +34,7 @@ class LogTestCommand extends AbstractCommand
     protected function configure()
     {
         $this->setName($this->cmdname);
-        $this->setDescription("Sends a few test events");
+        $this->setDescription("Sends a few test events to an endpoint");
         $this->addArgument("endpoint", InputArgument::OPTIONAL, "The endpoint or pipe to dump", DEFAULT_ENDPOINT);
         $this->setHelp(self::HELP_TEXT);
     }
@@ -50,19 +50,17 @@ class LogTestCommand extends AbstractCommand
 
         $logger = new Logger("main");
         $logger->pushHandler(new LogPipeHandler($endpoint));
-
         foreach(["debug","info","notice","warning","error","critical","alert","emergency"] as $level) {
-            $logger->{$level}("Test log event");
+            $logger->{$level}("This is a test message of level '{$level}' sent over the 'main' channel");
         }
 
         $logger = new Logger("alternate");
         $logger->pushHandler(new LogPipeHandler($endpoint));
-
         foreach(["debug","info","notice","warning","error","critical","alert","emergency"] as $level) {
-            $logger->{$level}("Test log event");
+            $logger->{$level}("This is a test message of level '{$level}' sent over the 'alternate' channel");
         }
 
-        $logger->error(new \Exception("Derp"));
+        $logger->error(new \Exception("This is an exception"));
 
         $logger->info("!metric.log page.hit", [ "route"=>"homepage" ]);
         $logger->info("!metric.log data.written", [ "records"=>13, "failed"=>0, "duration"=>199.7, "size"=>445032 ]);
