@@ -193,8 +193,11 @@ platforms may encounter issues.
 
     [!] Improvement  [*] Milestone  [+] New feature  [-] Removed feature
 
-            [+] Implemented metrics logging in the dumper
+    0.2.6   [+] Implemented metrics logging in the dumper
             [+] Added --timeout option to dump command to limit execution time for scripting
+            [!] A lot of refactoring
+            [!] Implemented a cleaner dumper API
+            [+] Implemented BSON serializer, requires php-mongodb to be installed
     0.2.5   [!] Reduced memory load when using the standard (non-interactive) dumper by moving
                 the buffer and configuration logic to the interactive dumper.
             [+] Exceptions are now unwrapped and displayed in a more useful format.
