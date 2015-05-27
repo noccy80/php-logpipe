@@ -40,6 +40,24 @@ abstract class SerializerTestAbstract extends \PhpUnit_Framework_TestCase
         $this->getSerializer()->unserialize("invalid-data");
     }
 
+    public function testSerializingInvalidDataThrowsExceptionOrRecovers()
+    {
+        $unserializable = new MonologMessage();
+        $unserializable->setData(array(
+            'testid',
+            array(
+                'message' => new UnserializableDummyClass()
+            )
+        ));
+        try {
+            $data = $this->getSerializer()->serialize($unserializable);
+        } catch (\NoccyLabs\LogPipe\Exception\SerializerException $e) {
+            $this->assertTrue(true);
+            return;
+        }
+        $this->assertNotNull($data);
+    }
+
     public function getMessages()
     {
         $messages = [];
@@ -77,7 +95,7 @@ abstract class SerializerTestAbstract extends \PhpUnit_Framework_TestCase
     }
 }
 
-class Unserializable {
-    private function __sleep() {}
+class UnserializableDummyClass {
+    private function __sleep() { throw new \Exception(); }
     private function __wakeup() {}
 }

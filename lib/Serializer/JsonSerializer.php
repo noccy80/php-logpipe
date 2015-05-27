@@ -38,9 +38,6 @@ class JsonSerializer implements SerializerInterface
     {
         $raw = [ get_class($message), $message->getData() ];
         $data = @\json_encode($raw);
-        if (!$data) {
-            throw new SerializerException("Unable to serialize data");
-        }
         return $data;
     }
 

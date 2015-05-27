@@ -36,10 +36,11 @@ class PhpSerializer implements SerializerInterface
      */
     public function serialize(MessageInterface $message)
     {
+        // No errors even on unserializable classes? Can't seem to trigger error in test case
         $data = @serialize($message);
-        if (!$data) {
-            throw new SerializerException("Unable to serialize data");
-        }
+        //if (!$data) {
+        //    throw new SerializerException("Unable to serialize data");
+        //}
         return $data;
     }
 

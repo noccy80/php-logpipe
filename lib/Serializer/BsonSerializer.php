@@ -36,12 +36,9 @@ class BsonSerializer implements SerializerInterface
      */
     public function serialize(MessageInterface $message)
     {
+        // No exception is thrown here.
         $raw = [ get_class($message), $message->getData() ];
-        try {
-            $data = @\bson_encode($raw);
-        } catch (\MongoException $e) {
-            throw new SerializerException("Unable to serialize data");
-        }
+        $data = @\bson_encode($raw);
         return $data;
     }
 

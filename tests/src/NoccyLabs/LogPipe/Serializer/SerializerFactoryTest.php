@@ -32,4 +32,10 @@ class SerializerFactoryTest extends \PhpUnit_Framework_TestCase
         $this->assertNotNull($serializer);
         $this->assertInstanceOf("NoccyLabs\\LogPipe\\Serializer\\SerializerInterface", $serializer);
     }
+
+    /** @expectedException \NoccyLabs\LogPipe\Exception\SerializerException */
+    public function testInvalidSerializerThrowingException()
+    {
+         $serializer = SerializerFactory::getSerializerForTag("_");
+    }
 }
