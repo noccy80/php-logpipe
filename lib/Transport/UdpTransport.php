@@ -77,16 +77,19 @@ class UdpTransport extends TransportAbstract
         $read = null;
         $ip = null;
         $port = null;
-        $bytes = socket_recvfrom($this->socket, $read, 65535, 0, $ip, $port);
-        if ($bytes < 1) {
+        $bytes = socket_recvfrom($this->socket, $read, 8192, 0, $ip, $port);
+        
+        if (!$bytes) {
             return;
         }
-
+        
         $key = "{$ip}:{$port}";
         if (!array_key_exists($key, $this->buffers)) {
             $this->buffers[$key] = $read;
+            trace("Created new buffer key={$key} size=".strlen($this->buffers[$key]));
         } else {
             $this->buffers[$key] .= $read;
+            trace("Wrote to buffer key={$key} size=".strlen($this->buffers[$key])." read=".$bytes);
         }
         return $this->protocol->unpack($this->buffers[$key], $this->serializer);
     }
