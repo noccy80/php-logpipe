@@ -82,14 +82,17 @@ class PipeV1Protocol implements ProtocolInterface
         $data = substr($buffer, self::HEADER_SIZE, $header['size']);
         $buffer = substr($buffer, $header['size'] + self::HEADER_SIZE);
 
-        // Match the protocol version
-        if (($header['version'] & 0x3F) != self::PROTOCOL_VERSION) {
-            return NULL;
-        }
-
         // Verify the protocol checksum
         if (crc32($data) != $header['crc32']) {
             $buffer = null;
+            tracer("DISCARDED message due to invalid CRC32");
+            return NULL;
+        }
+
+        // Match the protocol version
+        if (($header['version'] & 0x3F) != self::PROTOCOL_VERSION) {
+            $buffer = null;
+            tracer("DISCARDED message due to invalid protocol version");
             return NULL;
         }
 
