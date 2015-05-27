@@ -4,6 +4,7 @@ namespace NoccyLabs\LogPipe\Transport;
 
 use NoccyLabs\LogPipe\Message\MessageInterface;
 use NoccyLabs\LogPipe\Serializer\SerializerFactory;
+use NoccyLabs\LogPipe\Exception\TransportException;
 
 /**
  * Class UdpTransport
@@ -99,15 +100,16 @@ class UdpTransport extends TransportAbstract
      */
     public function listen()
     {
-        if (($this->stream) && (is_resource($this->stream))) {
-            fclose($this->stream);
-            $this->stream = null;
+        if ($this->socket) {
+            @socket_close($this->socket);
+            $this->socket = null;
         }
 
         $timeout = 1;
 
         $this->socket = socket_create(AF_INET, SOCK_DGRAM, SOL_UDP);
-        socket_bind($this->socket, $this->host, $this->port);
+
+        @socket_bind($this->socket, $this->host, $this->port);
         //$this->stream = @stream_socket_server(
         //    "udp://{$this->host}:{$this->port}",
         //    $errno,
@@ -119,7 +121,7 @@ class UdpTransport extends TransportAbstract
         $errstr = socket_strerror($errno);
 
         if ($errno || !$this->socket) {
-            throw new \InvalidArgumentException("UdpTransport:listen failed {$errno} {$errstr}");
+            throw new TransportException("UdpTransport:listen failed {$errno} {$errstr}");
         }
     }
 
@@ -153,5 +155,11 @@ class UdpTransport extends TransportAbstract
      */
     public function close()
     {
+        if ($this->socket) {
+            socket_close($this->socket);
+        }
+        if (($this->stream) && (is_resource($this->stream))) {
+            @fclose($this->stream);
+        }
     }
 }

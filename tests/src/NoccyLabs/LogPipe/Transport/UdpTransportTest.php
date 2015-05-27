@@ -21,7 +21,7 @@ class UdpTransportTest extends TransportTestAbstract
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException \NoccyLabs\LogPipe\Exception\TransportException
      */
     public function testListenFailureThrowsException()
     {
