@@ -49,6 +49,11 @@ class UdpTransport extends TransportAbstract
         parent::__construct($options);
     }
 
+    public function __destruct()
+    {
+        $this->close();
+    }
+
     /**
      * @param MessageInterface $message
      */
@@ -157,9 +162,11 @@ class UdpTransport extends TransportAbstract
     {
         if ($this->socket) {
             socket_close($this->socket);
+            $this->socket = null;
         }
         if (($this->stream) && (is_resource($this->stream))) {
             @fclose($this->stream);
+            $this->stream = null;
         }
     }
 }
