@@ -11,7 +11,10 @@
         "symfony/var-dumper": "~2.6"
     },
     "require-dev": {
-        "monolog/monolog": "~1.0"
+        "monolog/monolog": "~1.0",
+        "phpunit/phpunit": "~4.5",
+        "phpspec/prophecy": "^1.4",
+        "phpspec/prophecy-phpunit": "^1.1"
     },
     "autoload": {
         "files": [ "lib/globals.php" ],
