@@ -4,9 +4,8 @@ namespace NoccyLabs\LogPipe\Dumper\Output;
 
 use NoccyLabs\LogPipe\Message\MonologMessage;
 use NoccyLabs\LogPipe\Message\ConsoleMessage;
-use Prophecy\PhpUnit\ProphecyTestCase;
 
-abstract class OutputTestAbstract extends ProphecyTestCase
+abstract class OutputTestAbstract extends \PhpUnit_Framework_TestCase
 {
     public function getMessages()
     {

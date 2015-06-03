@@ -5,6 +5,7 @@ namespace NoccyLabs\LogPipe\Dumper\Output;
 use NoccyLabs\LogPipe\Message\MonologMessage;
 
 use Prophecy\Argument;
+use Prophecy\Prophet;
 
 require_once __DIR__."/OutputTestAbstract.php";
 
@@ -15,7 +16,9 @@ class ConsoleOutputTest extends OutputTestAbstract
      */
     public function testThatMessagesAreWrittenToTheOutput($message)
     {
-        $mockOutput = $this->prophesize('Symfony\Component\Console\Output\ConsoleOutput');
+        $prophet = new Prophet();
+
+        $mockOutput = $prophet->prophesize('Symfony\Component\Console\Output\ConsoleOutput');
 
         $mockOutput->writeln(Argument::any())->shouldBeCalled();
 
