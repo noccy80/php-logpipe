@@ -6,3 +6,4 @@ php:
 install:
   - pecl install msgpack-0.5.5
   - composer install
+script: phpunit -c phpunit.xml --tap
