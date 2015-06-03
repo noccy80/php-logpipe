@@ -83,7 +83,7 @@ class UdpTransport extends TransportAbstract
         $read = null;
         $ip = null;
         $port = null;
-        $bytes = socket_recvfrom($this->socket, $read, 8192, 0, $ip, $port);
+        $bytes = @socket_recvfrom($this->socket, $read, 8192, 0, $ip, $port);
         
         if (!$bytes) {
             return;

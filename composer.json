@@ -1,7 +1,10 @@
 {
     "name": "noccylabs/logpipe",
     "description": "Interactive logging via named pipes and sockets",
+    "license": "GPL-3.0",
+    "keywords": [ "logging", "debugging" ],
     "require": {
+        "php": ">=5.4.0",
         "symfony/console": "~2.6",
         "psr/log": "1.*",
         "symfony/yaml": "~2.6",
@@ -13,11 +16,14 @@
     "require-dev": {
         "monolog/monolog": "~1.0"
     },
+    "suggest": {
+        "ext-msgpack": "For using the Msgpack serializer",
+        "ext-mongo": "For using the Bson serializer"
+    },
     "autoload": {
         "files": [ "lib/globals.php" ],
         "psr-4": { "NoccyLabs\\LogPipe\\": "lib/", "\\": "tests/src/" }
     },
-    "license": "GPL-3.0",
     "authors": [
         {
             "name": "Christopher Vagnetoft",

@@ -71,7 +71,7 @@ You can also write events manually: **(not implemented)**
 
 ### Dumping events
 
-To start (listening for and) dumping events on the default port (`tcp:127.0.0.1:6601`) just use the **dump** command:
+To start (listening for and) dumping events on the default transport (`tcp:127.0.0.1:6601`) just use the **dump** command:
 
     $ bin/logpipe dump
 
@@ -83,10 +83,15 @@ You can create some test events by using the **test** command in another termina
 running:
 
     $ bin/logpipe test
+    
+To put the transport under some serious stress by spawning several dumpers to send a barrage of data
+to the dumper, you can do `logpipe dump -t stress <transport>`. 
 
 To save the log while viewing it, try using tee:
 
     $ bin/logpipe dump --no-ansi | tee messages.log
+    or:
+    $ bin/logpipe dump --tee messages.log
 
 You can also write events from the console, or from scripts:
 
