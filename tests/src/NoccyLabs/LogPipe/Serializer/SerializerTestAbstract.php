@@ -11,6 +11,14 @@ abstract class SerializerTestAbstract extends \PhpUnit_Framework_TestCase
 
     abstract function getSerializer();
 
+    public function setUp()
+    {
+        $serializer = $this->getSerializer();
+        if (!$serializer->isSupported()) {
+            $this->markTestSkipped("Serializer ".$serializer->getName()." not supported");
+        }
+    }
+
     /**
      * @dataProvider getMessages
      */
