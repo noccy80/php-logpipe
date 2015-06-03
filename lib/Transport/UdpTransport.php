@@ -92,10 +92,10 @@ class UdpTransport extends TransportAbstract
         $key = "{$ip}:{$port}";
         if (!array_key_exists($key, $this->buffers)) {
             $this->buffers[$key] = $read;
-            trace("Created new buffer key={$key} size=".strlen($this->buffers[$key]));
+            //trace("Created new buffer key={$key} size=".strlen($this->buffers[$key]));
         } else {
             $this->buffers[$key] .= $read;
-            trace("Wrote to buffer key={$key} size=".strlen($this->buffers[$key])." read=".$bytes);
+            //trace("Wrote to buffer key={$key} size=".strlen($this->buffers[$key])." read=".$bytes);
         }
         return $this->protocol->unpack($this->buffers[$key], $this->serializer);
     }
