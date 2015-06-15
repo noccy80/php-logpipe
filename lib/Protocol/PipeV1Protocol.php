@@ -85,14 +85,14 @@ class PipeV1Protocol implements ProtocolInterface
         // Verify the protocol checksum
         if (crc32($data) != $header['crc32']) {
             $buffer = null;
-            error_log("Warning: Discarded message due to invalid checksum");
+            // error_log("Warning: Discarded message due to invalid checksum");
             return NULL;
         }
 
         // Match the protocol version
         if (($header['version'] & 0x3F) != self::PROTOCOL_VERSION) {
             $buffer = null;
-            error_log("Warning: Discarded message due to invalid protocol version");
+            // error_log("Warning: Discarded message due to invalid protocol version");
             return NULL;
         }
 
