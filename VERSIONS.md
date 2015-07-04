@@ -3,6 +3,7 @@ LogPipe Version history
 
     [!] Improvement  [*] Milestone  [+] New feature  [-] Removed feature
 
+    0.2.7   [!] The ConsoleHandler is now a fully compliant PSR logger.
     0.2.6   [+] Implemented metrics logging in the dumper
             [+] Added --timeout option to dump command to limit execution time for scripting
             [!] A lot of refactoring
