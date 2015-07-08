@@ -10,6 +10,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use NoccyLabs\LogPipe\Common\FifoBuffer;
 use NoccyLabs\LogPipe\Dumper\Decoder\ExceptionDecoder;
 use NoccyLabs\LogPipe\Dumper\Decoder\MetricsDecoder;
+use NoccyLabs\LogPipe\Application\LogPipeApplication;
 
 /**
  * Class LogDumper
@@ -17,6 +18,8 @@ use NoccyLabs\LogPipe\Dumper\Decoder\MetricsDecoder;
  */
 class LogDumper
 {
+
+    protected $app;
 
     /**
      * @var
@@ -47,6 +50,11 @@ class LogDumper
 
     protected $timeout = null;
 
+    public function __construct(LogPipeApplication $app)
+    {
+        $this->app = $app;
+    }
+    
     /**
      * @param TransportInterface $transport
      */

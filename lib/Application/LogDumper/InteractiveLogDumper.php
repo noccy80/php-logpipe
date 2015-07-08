@@ -10,6 +10,7 @@ use NoccyLabs\LogPipe\Dumper\Filter\FilterInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use NoccyLabs\LogPipe\Application\Console\CharacterInput;
 use NoccyLabs\LogPipe\Common\FifoBuffer;
+use NoccyLabs\LogPipe\Application\LogPipeApplication;
 
 class InteractiveLogDumper extends LogDumper
 {
@@ -27,14 +28,25 @@ class InteractiveLogDumper extends LogDumper
         "output.wrap"   => 1,
         "output.title"  => 0
     ];
+    
+    protected $status_line;
 
     /**
      * @param $options
      */
-    public function __construct($options)
+    public function __construct(LogPipeApplication $app, $options)
     {
+        parent::__construct($app);
         $this->options = array_merge($this->options, $options);
         $this->buffer = new FifoBuffer($this->getOption("buffer.size"));
+        $this->status_line = new Helper\StatusLine();
+        $this->status_line->setStyle("44;37");
+        $this->status_line
+            ->addPanel([ $this, "getTotalPanel" ])
+            ->addPanel([ $this, "getSquelchPanel" ])
+            ->addPanel([ $this, "getDebugPanel" ])
+            ->addPanel([ $this, "getInfoPanel" ])
+            ;
     }
 
     /**
@@ -53,11 +65,11 @@ class InteractiveLogDumper extends LogDumper
         $break_at = ($this->timeout) ? time()+$this->timeout : null;
 
         while (!$signal()) {
-
             if ($this->getOption("output.title")) { $this->updateTitle(); }
 
             $msg = $this->transport->receive();
             if ($msg) {
+                $this->status_line->erase();
                 $this->onMessage($msg);
             }
 
@@ -70,9 +82,44 @@ class InteractiveLogDumper extends LogDumper
             }
 
             if (!$msg) {
+                $this->status_line->update();
                 usleep(10000);
             }
         }
+        
+        $this->status_line->erase();
+    }
+    
+    public function getSquelchPanel()
+    {
+        return [ Helper\Unicode::char(0x26D5). " " . $this->squelched, "30;43" ];
+    }
+
+    public function getTotalPanel()
+    {
+        return [ Helper\Unicode::char(0x27F3). " " . $this->buffer->getTotal(), "32;1" ];
+    }
+    
+    public function getDebugPanel()
+    {
+        $load = sys_getloadavg();
+        $blobs = [
+            Helper\Unicode::char(0x26A1) => sprintf("%.2f", $load[0]),
+            Helper\Unicode::char(0x26c3) => sprintf("%.2fKiB", memory_get_usage(true)/1024)
+        ];
+        $state = ($load[0]<0.7)?"42;37":"41;37";
+        $text = [];
+        foreach ($blobs as $k=>$v) {
+            $text[] = sprintf("%s \e[1m%s\e[21m", $k, $v);
+        }
+        $text = join(" \e[34m/\e[37m ",$text);
+        
+        return [ $text, $state ];
+    }
+    
+    public function getInfoPanel()
+    {
+        return [ "Press \e[1m:\e[21m for command mode, and \e[1m/\e[21m for search mode. \e[1mq\e[21m or \e[1m^C\e[21m exits", "37" ];
     }
 
     protected function onMessage(MessageInterface $msg)
@@ -86,13 +133,18 @@ class InteractiveLogDumper extends LogDumper
         $ch = $input->readChar();
         switch ($ch) {
             case chr(27):
-            case 'q':
+            case 'q': // quiet
                 return false;
+            case 'f': // freeze
+                // dump buffer to file and invoke pager
+                return true;
             case ':':
+                $this->status_line->erase();
                 $line = $input->readLine(":");
                 $this->evalDumperCommand($line);
                 break;
             case '/':
+                $this->status_line->erase();
                 $find = $input->readLine("/");
                 if ($find) {
                     if (strpos($find,"/") === false) {

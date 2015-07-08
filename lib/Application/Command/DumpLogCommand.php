@@ -96,9 +96,9 @@ class DumpLogCommand extends AbstractCommand
 
 
         if ($this->input->getOption("interactive")) {
-            $log_dumper = new InteractiveLogDumper($config_opts);
+            $log_dumper = new InteractiveLogDumper($this->getApplication(), $config_opts);
         } else {
-            $log_dumper = new LogDumper($config_opts);
+            $log_dumper = new LogDumper($this->getApplication(), $config_opts);
         }
         $log_dumper->setTransport($transport);
         $log_dumper->setDumper($dumper);
