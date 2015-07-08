@@ -5,6 +5,8 @@ namespace NoccyLabs\LogPipe\Application;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Output\ConsoleOutput;
+use NoccyLabs\LogPipe\Plugin\PluginManager;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Class LogPipeApplication
@@ -12,6 +14,10 @@ use Symfony\Component\Console\Output\ConsoleOutput;
  */
 class LogPipeApplication extends Application
 {
+    protected $plugins;
+
+    protected $event_dispatcher;
+    
     /**
      * Main console application entrypoint
      *
@@ -22,6 +28,7 @@ class LogPipeApplication extends Application
         $output = new ConsoleOutput();
         $inst = new self(APP_NAME, APP_VERSION, $output);
 
+        $inst->add(new Command\PluginsCommand());
         $inst->add(new Command\InstallCommand());
         $inst->add(new Command\DumpLogCommand());
         $inst->add(new Command\DumpLogCommand("dump"));
@@ -39,10 +46,40 @@ class LogPipeApplication extends Application
 
         $inst->run(null, $output);
     }
+    
+    public function initPlugins()
+    {
+        $plugins = new PluginManager($this);
+        $plugins
+            ->scanDirectory(getenv("HOME")."/.local/share/logpipe/plugins")
+            ->scanDirectory(getenv("HOME")."/.logpipe/plugins")
+            ->scanDirectory(getcwd()."/plugins")
+            ->scanDirectory(__DIR__."/../../plugins")
+            ;
+            
+        $this->plugins = $plugins;
+        
+        $plugins->loadAll();
+        
+    }
+    
+    public function getPluginManager()
+    {
+        return $this->plugins;
+    }
+    
+    public function initEvents()
+    {
+        $this->event_dispatcher = new EventDispatcher();
+
+    }
 
     public function __construct($app, $version, $output)
     {
         parent::__construct($app, $version);
+
+        $this->initEvents();
+        $this->initPlugins();
 
         $formatter = $output->getFormatter();
         $styles = [
@@ -56,8 +93,10 @@ class LogPipeApplication extends Application
         foreach ($styles as $name=>$style) {
             $formatter->setStyle($name, $style);
         }
+    }
 
-
-
+    public function getEventDispatcher()
+    {
+        return $this->event_dispatcher;
     }
 }

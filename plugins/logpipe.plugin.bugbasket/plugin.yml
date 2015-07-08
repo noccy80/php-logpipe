@@ -1,0 +1,12 @@
+name:       logpipe.plugin.bugbasket
+descr:      Automatically capture errors and exceptions
+version:    0.1.0
+authors:
+    - { name:'Christopher Vagnetoft', email:'noccylabs@gmail.com' }
+
+autoload:
+    psr-4:
+        LogPipe\Plugin\BugBasket: lib/
+
+plugin:
+    class:  LogPipe\Plugin\BugBasket\BugBasketPlugin
