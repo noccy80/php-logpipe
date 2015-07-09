@@ -99,7 +99,7 @@ class InteractiveLogDumper extends LogDumper
     {
         return [ Helper\Unicode::char(0x27F3). " " . $this->buffer->getTotal(), "32;1" ];
     }
-    
+        
     public function getDebugPanel()
     {
         $load = sys_getloadavg();
