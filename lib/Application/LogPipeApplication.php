@@ -7,6 +7,8 @@ use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Output\ConsoleOutput;
 use NoccyLabs\LogPipe\Plugin\PluginManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
+use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
  * Class LogPipeApplication
@@ -17,6 +19,8 @@ class LogPipeApplication extends Application
     protected $plugins;
 
     protected $event_dispatcher;
+    
+    protected $container;
     
     /**
      * Main console application entrypoint
@@ -40,14 +44,16 @@ class LogPipeApplication extends Application
         $inst->add(new Command\LogTestCommand("test"));
         $inst->add(new Command\LogPassCommand());
 
-        $inst->add(new Command\MetricsDumpCommand());
-        $inst->add(new Command\MetricsShowCommand());
-
 
         $inst->run(null, $output);
     }
+
+    public function getPluginManager()
+    {
+        return $this->plugins;
+    }
     
-    public function initPlugins()
+    private function initPlugins()
     {
         $plugins = new PluginManager($this);
         $plugins
@@ -62,16 +68,15 @@ class LogPipeApplication extends Application
         $plugins->loadAll();
         
     }
-    
-    public function getPluginManager()
-    {
-        return $this->plugins;
-    }
-    
-    public function initEvents()
+        
+    private function initEvents()
     {
         $this->event_dispatcher = new EventDispatcher();
-
+    }
+    
+    private function initContainer()
+    {
+        $this->container = new ContainerBuilder();
     }
 
     public function __construct($app, $version, $output)
@@ -79,6 +84,7 @@ class LogPipeApplication extends Application
         parent::__construct($app, $version);
 
         $this->initEvents();
+        $this->initContainer();
         $this->initPlugins();
 
         $formatter = $output->getFormatter();
@@ -98,5 +104,10 @@ class LogPipeApplication extends Application
     public function getEventDispatcher()
     {
         return $this->event_dispatcher;
+    }
+    
+    public function getContainer()
+    {
+        return $this->container;
     }
 }

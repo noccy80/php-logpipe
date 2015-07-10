@@ -14,11 +14,8 @@ class MetricsPlugin extends Plugin
      */
     public function onLoad()
     {
-        $app = $this->getApplication();
-
         // Listen for the relevant events
-        $events = $app->getEventDispatcher();
-        $events->addListener("logpipe.message.pre_filter", [ $this, "onMessagePreFilter" ]);
+        $this->addEventListener("logpipe.message.pre_filter", [ $this, "onMessagePreFilter" ]);
         
     }
 
