@@ -83,7 +83,9 @@ class InteractiveLogDumper extends LogDumper
 
             if (!$msg) {
                 $this->status_line->update();
-                usleep(10000);
+                usleep(25000);
+            } else {
+                usleep(1000);
             }
         }
         
@@ -105,7 +107,7 @@ class InteractiveLogDumper extends LogDumper
         $load = sys_getloadavg();
         $blobs = [
             Helper\Unicode::char(0x26A1) => sprintf("%.2f", $load[0]),
-            Helper\Unicode::char(0x26c3) => sprintf("%.2fKiB", memory_get_usage(true)/1024)
+            Helper\Unicode::char(0x26c3) => sprintf("%.2fMiB", memory_get_usage(true)/1024/1024),
         ];
         $state = ($load[0]<0.7)?"42;37":"41;37";
         $text = [];
@@ -119,7 +121,7 @@ class InteractiveLogDumper extends LogDumper
     
     public function getInfoPanel()
     {
-        return [ "Press \e[1m:\e[21m for command mode, and \e[1m/\e[21m for search mode. \e[1mq\e[21m or \e[1m^C\e[21m exits", "37" ];
+        return [ "[\e[1m:\e[21m] command mode  [\e[1m/\e[21m] search  [\e[1mq\e[21m/\e[1m^C\e[21m] exit", "37" ];
     }
 
     protected function onMessage(MessageInterface $msg)

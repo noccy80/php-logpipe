@@ -34,6 +34,13 @@ class StatusLine
 
     public function update()
     {
+        static $lastCall;
+        $thisCall = microtime(true);
+        if ($this->visible && (($thisCall-$lastCall)<.1)) {
+            return;
+        }
+        $lastCall = $thisCall;
+        
         $this->last = $this->buffer;
         $updated = !$this->visible;
         $this->visible = true;
