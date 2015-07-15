@@ -20,10 +20,7 @@ class BugBasketPlugin extends Plugin
         //$status = $app->getStatusLine();
         //$status->addPanel(new BugBasketStatusPanel($this));
         
-        // Listen for the relevant events
-        $events = $app->getEventDispatcher();
-        $events->addListener("logpipe.message.pre_filter", [ $this, "onMessagePreFilter" ]);
-
+        $this->addEventListener("message.pre_filter", [ $this, "onMessagePreFilter" ]);
     }
 
     /**
@@ -37,15 +34,6 @@ class BugBasketPlugin extends Plugin
     public function onMessagePreFilter(MessageEvent $event)
     {
         $message = $event->getMessage();
-        if ($message->hasTag("metrics") && $message->hasData()) {
-            // handle the message
-            $data = $message->getData();
-            
-            // Consuming the message ensures it doesn't end up in the log.
-            $message->consume();
-            // By stopping propagation, remaining event listeners will not be
-            // called.
-            $event->stopPropagation();
-        }
+     
     }
 }

@@ -36,7 +36,6 @@ class PluginsCommand extends AbstractCommand
     {
         $this->setName($this->cmdname);
         $this->setDescription("Show plugins");
-        $this->addOption("all", "a", InputOption::VALUE_NONE, "Show all plugins, not just the loaded plugins");
     }
 
 
@@ -45,13 +44,22 @@ class PluginsCommand extends AbstractCommand
      */
     protected function exec()
     {
-        $all = $this->input->getOption("all");
-        $info = $this->getApplication()->getPluginManager()->getInfo($all);
-        
-        $this->output->writeln($all?"Available plugins:":"Loaded plugins:");
-        
-        foreach ($info as $name=>$description) {
-            $this->output->writeln(" - <info>".$name."</info>: <comment>".$description."</comment>");
+        $info = $this->getApplication()->getPluginManager()->getManifests();
+
+        $this->output->writeln("Available plugins:");
+
+        foreach ($info as $name=>$manifest) {
+            if ($manifest->isLoaded()) {
+                if ($manifest->isDependency()) {
+                    $check = "<fg=cyan>x</fg=cyan>";
+                } else {
+                    $check = "<options=bold;fg=cyan>x</options=bold;fg=cyan>";
+                }
+            } else {
+                $check = "<options=bold;fg=black>-</options=bold;fg=black>";
+            }
+            $description = $manifest->getDescription();
+            $this->output->writeln(sprintf("  [%s] <info>%-30s</info> <comment>%s</comment>", $check, $name, $description));
         }
     }
 

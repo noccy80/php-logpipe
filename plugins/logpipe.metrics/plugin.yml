@@ -1,4 +1,4 @@
-name:       logpipe.plugin.metrics
+name:       logpipe.metrics
 descr:      Tunnel metrics via LogPipe
 version:    0.1.0
 authors:

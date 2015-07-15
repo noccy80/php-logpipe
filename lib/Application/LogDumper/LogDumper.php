@@ -3,6 +3,7 @@
 namespace NoccyLabs\LogPipe\Application\LogDumper;
 
 use NoccyLabs\LogPipe\Message\MessageInterface;
+use NoccyLabs\LogPipe\Message\MessageEvent;
 use NoccyLabs\LogPipe\Posix\SignalListener;
 use NoccyLabs\LogPipe\Transport\TransportInterface;
 use NoccyLabs\LogPipe\Dumper\Filter\FilterInterface;
@@ -10,6 +11,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 use NoccyLabs\LogPipe\Common\FifoBuffer;
 use NoccyLabs\LogPipe\Dumper\Decoder\ExceptionDecoder;
 use NoccyLabs\LogPipe\Dumper\Decoder\MetricsDecoder;
+use Symfony\Component\EventDispatcher\EventDispatcher;
 
 /**
  * Class LogDumper
@@ -46,6 +48,9 @@ class LogDumper
     protected $squelched = 0;
 
     protected $timeout = null;
+
+    protected $eventDispatcher;
+    
 
     /**
      * @param TransportInterface $transport
@@ -127,6 +132,10 @@ class LogDumper
 
     protected function onMessage(MessageInterface $msg)
     {
+        if ($this->eventDispatcher) {
+            $evt = new MessageEvent($msg);
+            $this->eventDispatcher->dispatch("message.pre_filter", $evt);
+        }
         if (!($this->filter->filterMessage($msg, false))) {
             if (($this->squelched > 0) && ($this->squelch_info)) {
                 $this->output->writeln("\r<fg=black;bg=yellow> {$this->squelched}</fg=black;bg=yellow><fg=black;bg=yellow;options=bold> messages squelched </fg=black;bg=yellow;options=bold>");
@@ -140,6 +149,17 @@ class LogDumper
                 $this->output->write("\r<fg=black;bg=yellow> {$this->squelched} </fg=black;bg=yellow>");
             }
         }
+    }
+
+    public function setEventDispatcher(EventDispatcher $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+        return $this;
+    }
+    
+    public function getEventDispatcher()
+    {
+        return $this->eventDispatcher;
     }
 
 }

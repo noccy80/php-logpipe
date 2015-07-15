@@ -3,6 +3,11 @@ LogPipe Version history
 
     [!] Improvement  [*] Milestone  [+] New feature  [-] Removed feature
 
+    0.2.8   [+] Plugin architecture for extending the dumper.
+            [!] The interactive dumper got a fancy status line
+            [!] A lot of rewrites and optimizations
+            [-] Removed the buffer from the interactive dumper for now, to be
+                re-introduced as a plugin.
     0.2.7   [!] The ConsoleHandler is now a fully compliant PSR logger.
     0.2.6   [+] Implemented metrics logging in the dumper
             [+] Added --timeout option to dump command to limit execution time for scripting

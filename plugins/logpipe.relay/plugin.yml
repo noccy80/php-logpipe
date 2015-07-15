@@ -1,4 +1,4 @@
-name:       logpipe.plugin.relay
+name:       logpipe.relay
 descr:      Relay a single source to multiple consumers (dumpers)
 version:    0.1.0
 authors:

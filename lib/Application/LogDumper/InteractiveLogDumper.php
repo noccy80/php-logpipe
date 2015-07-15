@@ -54,8 +54,6 @@ class InteractiveLogDumper extends LogDumper
 
         while (!$signal()) {
 
-            if ($this->getOption("output.title")) { $this->updateTitle(); }
-
             $msg = $this->transport->receive();
             if ($msg) {
                 $this->onMessage($msg);
@@ -177,13 +175,5 @@ class InteractiveLogDumper extends LogDumper
         return $this->options[$key];
     }
 
-    /**
-     *
-     */
-    protected function updateTitle()
-    {
-        $received = $this->buffer->getTotal();
-        echo "\e]0;LogPipe [{$received}]\x07";
-    }
-
+    
 }

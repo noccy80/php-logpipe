@@ -26,6 +26,12 @@ class PluginManifest
     
     protected $app;
     
+    protected $auto = true;
+    
+    protected $depends = [];
+    
+    protected $is_dependency = false;
+    
     public function __construct($filename, LogPipeApplication $app)
     {
         $this->setManifestFile($filename);
@@ -133,6 +139,29 @@ class PluginManifest
     protected function parsePlugin($plugin)
     {
         $this->class_name = $plugin["class"];
+        
+        if (array_key_exists("auto", $plugin)) {
+            $this->auto = (bool)$plugin["auto"];
+        }
+        
+        if (array_key_exists("depends", $plugin)) {
+            $this->depends = $plugin["depends"];
+        }
+    }
+    
+    public function isLoaded()
+    {
+        return !empty($this->plugin);
+    }
+    
+    public function isDependency()
+    {
+        return $this->is_dependency;
+    }
+    
+    public function setIsDependency($is_dependency)
+    {
+        $this->is_dependency = (bool)$is_dependency;
     }
     
     public function loadPlugin()
@@ -146,12 +175,18 @@ class PluginManifest
         $cn = $this->class_name;
         $ci = new $cn();
         $ci->setApplication($this->app);
+        $ci->setManifest($this);
         $ci->onLoad();
 
         $this->plugin = $ci;
         
         return $ci;
         
+    }
+    
+    public function getDependencies()
+    {
+        return $this->depends;
     }
     
     public function getName()
@@ -167,5 +202,10 @@ class PluginManifest
     public function getVersion()
     {
         return $this->version;
+    }
+    
+    public function getAutoEnable()
+    {
+        return $this->auto;
     }
 }

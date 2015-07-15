@@ -100,6 +100,7 @@ class DumpLogCommand extends AbstractCommand
         } else {
             $log_dumper = new LogDumper($config_opts);
         }
+        $log_dumper->setEventDispatcher($this->getApplication()->getEventDispatcher());
         $log_dumper->setTransport($transport);
         $log_dumper->setDumper($dumper);
 

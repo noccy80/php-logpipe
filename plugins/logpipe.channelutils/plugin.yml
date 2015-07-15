@@ -1,0 +1,12 @@
+name:       logpipe.dumper.channelutil
+descr:      Add a list of the seen channels to the dumper
+version:    0.1.0
+authors:
+    - { name:'Christopher Vagnetoft', email:'noccylabs@gmail.com' }
+
+autoload:
+    psr-4:
+        LogPipe\Plugin\Dumper\ChannelUtil: lib/
+
+plugin:
+    class:  LogPipe\Plugin\Dumper\ChannelUtil\ChannelUtilPlugin

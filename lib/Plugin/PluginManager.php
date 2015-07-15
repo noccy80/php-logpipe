@@ -35,6 +35,8 @@ class PluginManager
             
         }
         
+        ksort($this->manifests);
+        
         return $this;
     }
     
@@ -53,28 +55,34 @@ class PluginManager
     public function loadAll()
     {
         foreach (array_keys($this->manifests) as $name) {
-            $this->loadPlugin($name);
+            $manifest = $this->manifests[$name];
+            if ($manifest->getAutoEnable()) {
+                $this->loadPlugin($name);
+            }
         }
     }
     
-    public function loadPlugin($name)
+    public function loadPlugin($name, $is_dependency=false)
     {
-        if (array_key_exists($name, $this->manifests)) {
-            $this->plugins[$name] = $this->manifests[$name]->loadPlugin();
+        if (array_key_exists($name, $this->plugins)) {
+            return $this->plugins[$name];
         }
+
+        if (array_key_exists($name, $this->manifests)) {
+            $manifest = $this->manifests[$name];
+            $depends = (array)$manifest->getDependencies();
+            foreach ($depends as $dependency) {
+                $this->loadPlugin($dependency, true);
+            }
+            $this->plugins[$name] = $manifest->loadPlugin();
+        }
+        $manifest->setIsDependency($is_dependency);
         return $this->plugins[$name];
     }
     
-    public function getInfo($only_loaded=false)
+    public function getManifests()
     {
-        $info = [];
-        foreach ($this->manifests as $name=>$manifest) {
-            if (!(array_key_exists($name, $this->plugins) || $only_loaded)) {
-                continue;
-            }
-            $info[$name] = $manifest->getDescription()." (v".$manifest->getVersion().")";
-        }
-        return $info;
+        return $this->manifests;
     }
     
 }
