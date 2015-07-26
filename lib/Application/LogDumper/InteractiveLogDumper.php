@@ -10,6 +10,7 @@ use NoccyLabs\LogPipe\Dumper\Filter\FilterInterface;
 use Symfony\Component\Console\Output\OutputInterface;
 use NoccyLabs\LogPipe\Application\Console\CharacterInput;
 use NoccyLabs\LogPipe\Common\FifoBuffer;
+use NoccyLabs\LogPipe\Application\LogPipeApplication;
 
 class InteractiveLogDumper extends LogDumper
 {
@@ -23,16 +24,17 @@ class InteractiveLogDumper extends LogDumper
      * @var array
      */
     protected $options = [
-        "buffer.size"   => 1000,
+        "buffer.size"   => 100,
         "output.wrap"   => 1,
         "output.title"  => 0
     ];
-
+    
     /**
      * @param $options
      */
-    public function __construct($options)
+    public function __construct(LogPipeApplication $app, $options)
     {
+        parent::__construct($app);
         $this->options = array_merge($this->options, $options);
         $this->buffer = new FifoBuffer($this->getOption("buffer.size"));
     }
@@ -52,11 +54,26 @@ class InteractiveLogDumper extends LogDumper
 
         $break_at = ($this->timeout) ? time()+$this->timeout : null;
 
+        $this->eventDispatcher->dispatch(DumperEvent::DUMPING, new DumperEvent());
+        
+        $inBatch = false;
+
         while (!$signal()) {
+            if ($this->getOption("output.title")) { $this->updateTitle(); }
 
             $msg = $this->transport->receive();
             if ($msg) {
+                if (!$inBatch) {
+                    $inBatch = true;
+                    $this->eventDispatcher->dispatch(DumperEvent::BEFORE_BATCH, new DumperEvent());
+                }
                 $this->onMessage($msg);
+            } else {
+                if ($inBatch) {
+                    $inBatch = false;
+                    $this->eventDispatcher->dispatch(DumperEvent::AFTER_BATCH, new DumperEvent());
+                }
+                
             }
 
             if (!$this->handleInput($input)) {
@@ -68,11 +85,15 @@ class InteractiveLogDumper extends LogDumper
             }
 
             if (!$msg) {
-                usleep(10000);
+                usleep(25000);
+            } else {
+                usleep(1000);
             }
         }
+        
+        $this->eventDispatcher->dispatch(DumperEvent::TERMINATING, new DumperEvent());
     }
-
+    
     protected function onMessage(MessageInterface $msg)
     {
         $this->buffer->push($msg);
@@ -84,13 +105,19 @@ class InteractiveLogDumper extends LogDumper
         $ch = $input->readChar();
         switch ($ch) {
             case chr(27):
-            case 'q':
+            case 'q': // quiet
                 return false;
+            case 'f': // freeze
+                // dump buffer to file and invoke pager
+                return true;
             case ':':
+                $this->eventDispatcher->dispatch(DumperEvent::SUSPEND, new DumperEvent());
                 $line = $input->readLine(":");
                 $this->evalDumperCommand($line);
+                $this->eventDispatcher->dispatch(DumperEvent::DUMPING, new DumperEvent());
                 break;
             case '/':
+                $this->eventDispatcher->dispatch(DumperEvent::SUSPEND, new DumperEvent());
                 $find = $input->readLine("/");
                 if ($find) {
                     if (strpos($find,"/") === false) {
@@ -102,6 +129,7 @@ class InteractiveLogDumper extends LogDumper
                     $items = $this->buffer->match($find);
                     foreach ($items as $item) { $this->dumper->dump($item); }
                 }
+                $this->eventDispatcher->dispatch(DumperEvent::DUMPING, new DumperEvent());
                 break;
         }
         return true;

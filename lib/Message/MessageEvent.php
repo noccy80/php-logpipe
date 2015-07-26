@@ -10,6 +10,8 @@ class MessageEvent extends Event
     
     const POST_FILTER = "message.post_filter";
     
+    const SQUELCHED = "message.squelched";
+    
     protected $message;
     
     public function __construct(MessageInterface $message)

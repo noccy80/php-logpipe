@@ -60,6 +60,9 @@ class LogTestCommand extends AbstractCommand
             case 'stress':
                 $this->runStressTest($endpoint);
                 break;
+            case 'random':
+                $this->runRandomTest($endpoint);
+                break;
             default:
                 throw new \Exception("No such test {$test}");
         }
@@ -86,6 +89,21 @@ class LogTestCommand extends AbstractCommand
         $logger->info("!metric.log data.written", [ "records"=>13, "failed"=>0, "duration"=>199.7, "size"=>445032 ]);
         $logger->info("!metric.log feature-use", [ "privacy"=>true, "notifications"=>["email"=>true, "mobile"=>true, "desktop"=>false ]]);
         $logger->info("!metric.item page.hit.simple homepage");
+
+    }
+
+    private function runRandomTest($endpoint)
+    {
+        $logger = new Logger("main");
+        $logger->pushHandler(new LogPipeHandler($endpoint));
+
+        for ($n = 1; $n < 10; $n++) {
+            foreach(["debug","info","notice","warning","error","critical","alert","emergency"] as $level) {
+                $logger->{$level}("This is a test message of level '{$level}' sent over the 'main' channel");
+                $delay = rand(1,1000)*1000;
+                usleep($delay);
+            }
+        }
 
     }
 

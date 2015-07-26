@@ -4,6 +4,7 @@ namespace NoccyLabs\LogPipe\Application\LogDumper;
 
 use NoccyLabs\LogPipe\Message\MessageInterface;
 use NoccyLabs\LogPipe\Message\MessageEvent;
+use NoccyLabs\LogPipe\Application\LogDumper\DumperEvent;
 use NoccyLabs\LogPipe\Posix\SignalListener;
 use NoccyLabs\LogPipe\Transport\TransportInterface;
 use NoccyLabs\LogPipe\Dumper\Filter\FilterInterface;
@@ -12,6 +13,7 @@ use NoccyLabs\LogPipe\Common\FifoBuffer;
 use NoccyLabs\LogPipe\Dumper\Decoder\ExceptionDecoder;
 use NoccyLabs\LogPipe\Dumper\Decoder\MetricsDecoder;
 use Symfony\Component\EventDispatcher\EventDispatcher;
+use NoccyLabs\LogPipe\Application\LogPipeApplication;
 
 /**
  * Class LogDumper
@@ -19,6 +21,8 @@ use Symfony\Component\EventDispatcher\EventDispatcher;
  */
 class LogDumper
 {
+
+    protected $app;
 
     /**
      * @var
@@ -51,7 +55,11 @@ class LogDumper
 
     protected $eventDispatcher;
     
-
+    public function __construct(LogPipeApplication $app)
+    {
+        $this->app = $app;
+    }
+    
     /**
      * @param TransportInterface $transport
      */
@@ -113,14 +121,25 @@ class LogDumper
 
         $break_at = ($this->timeout) ? time()+$this->timeout : null;
 
+        $inBatch = false;;
+        
+        $this->eventDispatcher->dispatch(DumperEvent::DUMPING, new DumperEvent());
+
         while (!$signal()) {
 
-            $msg = $this->transport->receive();
-            if ($msg) {
+            while ($msg = $this->transport->receive()) {
+                if (!$inBatch) {
+                    $this->eventDispatcher->dispatch(DumperEvent::BEFORE_BATCH, new DumperEvent());
+                    $inBatch = true;
+                }
                 $this->onMessage($msg);
-            } else {
-                usleep(10000);
+                usleep(100);
             }
+            if ($inBatch) {
+                $this->eventDispatcher->dispatch(DumperEvent::AFTER_BATCH, new DumperEvent());
+                $inBatch = false;
+            }
+            usleep(10000);
 
             if ($break_at && ($break_at < time())) {
                 break;
@@ -128,6 +147,8 @@ class LogDumper
 
         }
 
+        $this->eventDispatcher->dispatch(DumperEvent::TERMINATING, new DumperEvent());
+        
     }
 
     protected function onMessage(MessageInterface $msg)
@@ -137,17 +158,10 @@ class LogDumper
             $this->eventDispatcher->dispatch("message.pre_filter", $evt);
         }
         if (!($this->filter->filterMessage($msg, false))) {
-            if (($this->squelched > 0) && ($this->squelch_info)) {
-                $this->output->writeln("\r<fg=black;bg=yellow> {$this->squelched}</fg=black;bg=yellow><fg=black;bg=yellow;options=bold> messages squelched </fg=black;bg=yellow;options=bold>");
-                $this->squelched = 0;
-            }
-            $this->output->write("\r\e[K");
             $this->dumper->dump($msg);
         } else {
-            $this->squelched++;
-            if ($this->squelch_info) {
-                $this->output->write("\r<fg=black;bg=yellow> {$this->squelched} </fg=black;bg=yellow>");
-            }
+            $evt = new MessageEvent($msg);
+            $this->eventDispatcher->dispatch(MessageEvent::SQUELCHED, $evt);
         }
     }
 
