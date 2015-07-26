@@ -1,4 +1,4 @@
-name:       logpipe.statusbar
+name:       logpipe.dumper.statusbar
 descr:      Adds a statusbar to the dumpers
 version:    0.1.0
 authors:

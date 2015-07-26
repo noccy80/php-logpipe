@@ -7,6 +7,7 @@ use NoccyLabs\LogPipe\Handler\LogPipeHandler;
 use Monolog\Logger;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
+use Symfony\Component\Console\Helper\Table;
 
 /**
  * Class LogTestCommand
@@ -36,6 +37,9 @@ class PluginsCommand extends AbstractCommand
     {
         $this->setName($this->cmdname);
         $this->setDescription("Show plugins");
+        
+        $this->addOption("enable", null, InputOption::VALUE_REQUIRED, "Enable a plugin in ~/.logpipe/plugins.conf");
+        $this->addOption("disable", null, InputOption::VALUE_REQUIRED, "Disable a plugin in ~/.logpipe/plugins.conf");
     }
 
 
@@ -46,21 +50,82 @@ class PluginsCommand extends AbstractCommand
     {
         $info = $this->getApplication()->getPluginManager()->getManifests();
 
+        
+        if (($enable = $this->input->getOption("enable"))) {
+            $this->output->writeln("<info>Enabling plugin {$enable}...</info>");
+            $this->enablePlugin($enable);
+            return;
+        }
+
+        if (($disable = $this->input->getOption("disable"))) {
+            $this->output->writeln("<info>Disabling plugin {$disable}...</info>");
+            $this->disablePlugin($disable);
+            return;
+        }
+        
         $this->output->writeln("Available plugins:");
 
+        $table = new Table($this->output);
+        $table->setStyle("compact");
+        $table->setHeaders(["Name", "Version", "Description", "Status" ]);
         foreach ($info as $name=>$manifest) {
             if ($manifest->isLoaded()) {
                 if ($manifest->isDependency()) {
-                    $check = "<fg=cyan>x</fg=cyan>";
+                    $check = "<options=bold;fg=green>Loaded (Dependency)</options=bold;fg=green>";
                 } else {
-                    $check = "<options=bold;fg=cyan>x</options=bold;fg=cyan>";
+                    $check = "<options=bold;fg=cyan>Loaded</options=bold;fg=cyan>";
                 }
             } else {
                 $check = "<options=bold;fg=black>-</options=bold;fg=black>";
             }
             $description = $manifest->getDescription();
-            $this->output->writeln(sprintf("  [%s] <info>%-30s</info> <comment>%s</comment>", $check, $name, $description));
+            $version = $manifest->getVersion();
+            $table->addRow([
+                $name,
+                $version,
+                $description,
+                $check,
+            ]);
         }
+        
+        $table->render();
+
     }
 
+    protected function enablePlugin($name)
+    {
+        $pluginsConfig = getenv("HOME")."/.logpipe/plugins.conf";
+        if (!is_dir(dirname($pluginsConfig))) {
+            mkdir(dirname($pluginsConfig));
+        }
+        if (file_exists($pluginsConfig)) {
+            $current = file($pluginsConfig, FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES);
+        } else {
+            $current = [];
+        }
+        if (!in_array($name, $current)) {
+            $current[] = $name;
+        }
+        file_put_contents($pluginsConfig, join("\n", $current));        
+    }
+    
+    protected function disablePlugin($name)
+    {
+        $pluginsConfig = getenv("HOME")."/.logpipe/plugins.conf";
+        if (!is_dir(dirname($pluginsConfig))) {
+            return;
+        }
+        if (file_exists($pluginsConfig)) {
+            $current = file($pluginsConfig, FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES);
+        } else {
+            return;
+        }
+        if (in_array($name, $current)) {
+            $current = array_filter($current, function ($item) use ($name) {
+                return $name!=$item;
+            });
+        }
+        file_put_contents($pluginsConfig, join("\n", $current));        
+    }
+    
 }

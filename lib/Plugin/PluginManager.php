@@ -75,6 +75,8 @@ class PluginManager
                 $this->loadPlugin($dependency, true);
             }
             $this->plugins[$name] = $manifest->loadPlugin();
+        } else {
+            throw new \Exception("The plugin could not be loaded: {$name}");
         }
         $manifest->setIsDependency($is_dependency);
         return $this->plugins[$name];

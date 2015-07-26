@@ -34,6 +34,9 @@ class BugBasketPlugin extends Plugin
     public function onMessagePreFilter(MessageEvent $event)
     {
         $message = $event->getMessage();
+
+        
+
      
     }
 }

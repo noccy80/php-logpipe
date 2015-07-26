@@ -9,6 +9,7 @@ use NoccyLabs\LogPipe\Plugin\PluginManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\Yaml\Yaml;
 
 /**
  * Class LogPipeApplication
@@ -64,8 +65,29 @@ class LogPipeApplication extends Application
             ;
             
         $this->plugins = $plugins;
-        
-        $plugins->loadAll();
+
+        $pluginConfig = getenv("HOME")."/.logpipe/plugins.conf";
+        if (file_exists($pluginConfig)) {
+            $pluginsList = file($pluginConfig, FILE_IGNORE_NEW_LINES|FILE_SKIP_EMPTY_LINES);
+            foreach ((array)$pluginsList as $pluginName) {
+                try {
+                    $plugins->loadPlugin($pluginName);
+                } catch (\Exception $e) {
+                    error_log("Warning: {$e->getMessage()}");
+                }
+            }
+        }
+
+        if (($pluginsEnv = getenv("LOGPIPE_PLUGINS"))) {
+            $pluginsEnv = explode(",", $pluginsEnv);
+            foreach ($pluginsEnv as $pluginName) {
+                try {
+                    $plugins->loadPlugin($pluginName);
+                } catch (\Exception $e) {
+                    error_log("Warning: {$e->getMessage()}");
+                }
+            }
+        }
         
     }
         

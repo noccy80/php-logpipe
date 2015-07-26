@@ -10,3 +10,6 @@ autoload:
 
 plugin:
     class:  LogPipe\Plugin\BugBasket\BugBasketPlugin
+    depends:
+        - logpipe.corestats
+        - logpipe.dumper.statusbar
