@@ -72,7 +72,18 @@ class PluginManager
             $manifest = $this->manifests[$name];
             $depends = (array)$manifest->getDependencies();
             foreach ($depends as $dependency) {
-                $this->loadPlugin($dependency, true);
+                if (strpos($dependency,":")===false) {
+                    $this->loadPlugin($dependency, true);
+                } else {
+                    list ($type, $dependency) = explode(":", $dependency, 2);
+                    if ($type == "php") {
+                        if (!extension_loaded($dependency)) {
+                            throw new \Exception("The plugin {$name} requires the PHP extension {$dependency}, which is not available or not loaded");
+                        }
+                    } else {
+                        throw new \Exception("The plugin {$name} has got invalid dependencies in the manifest");
+                    }
+                }
             }
             $this->plugins[$name] = $manifest->loadPlugin();
         } else {

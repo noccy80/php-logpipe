@@ -13,3 +13,4 @@ plugin:
     depends:
         - logpipe.corestats
         - logpipe.dumper.statusbar
+        - php:sqlite3
