@@ -9,13 +9,15 @@ use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
+use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 
 /**
  * This class provides an abstract base for the console commands.
  *
  * @package NoccyLabs\LogPipe\Application\Command
  */
-abstract class AbstractCommand extends Command
+abstract class AbstractCommand extends Command implements ContainerAwareInterface
 {
     /**
      * @var InputInterface
@@ -27,6 +29,11 @@ abstract class AbstractCommand extends Command
      */
     protected $output;
 
+    /**
+     * @var ContainerInterface
+     */
+    protected $container;
+    
     public function __construct()
     {
         parent::__construct();
@@ -81,5 +88,15 @@ abstract class AbstractCommand extends Command
         }
 
         $this->setHelp((string)$helpstr);
+    }
+    
+    public function setContainer(ContainerInterface $container=null)
+    {
+        $this->container = $container;
+    }
+    
+    public function getContainer()
+    {
+        return $this->container;
     }
 }

@@ -7,6 +7,9 @@ use NoccyLabs\LogPipe\Message\MessageEvent;
 
 class BugBasketPlugin extends Plugin
 {
+    /** @var BugStash */
+    protected $stash;
+    
     /**
      * Called when the plugin is loaded
      *
@@ -14,12 +17,8 @@ class BugBasketPlugin extends Plugin
      */
     public function onLoad()
     {
-        $app = $this->getApplication();
-
-        // Set up an indicator in the status line
-        //$status = $app->getStatusLine();
-        //$status->addPanel(new BugBasketStatusPanel($this));
-        
+        $this->getContainer()->set("plugin.bugbasket", $this);
+        $this->getApplication()->add(new BugsCommand());
         $this->addEventListener("message.pre_filter", [ $this, "onMessagePreFilter" ]);
     }
 
@@ -35,8 +34,25 @@ class BugBasketPlugin extends Plugin
     {
         $message = $event->getMessage();
 
-        
-
+        if (preg_match("/exception/i", $message->getText())) {
+            $this->getStash()->addToStash($message, "exception");
+        }
      
+    }
+    
+    public function getStash()
+    {
+        if (!$this->stash) {
+            $this->stash = new BugStash(getcwd()."/bugstash.db");
+        }
+        return $this->stash;
+    }
+    
+    public function dropStash()
+    {
+        $stashFile = getcwd()."/bugstash.db";
+        if (file_exists($stashFile)) {
+            unlink($stashFile);
+        }
     }
 }

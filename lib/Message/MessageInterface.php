@@ -21,6 +21,11 @@ interface MessageInterface {
     public function getSource();
 
     /**
+     * @return string
+     */
+    public function getChannel();
+    
+    /**
      * @return mixed
      */
     public function getLevel();

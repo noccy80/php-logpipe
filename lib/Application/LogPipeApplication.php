@@ -2,6 +2,7 @@
 
 namespace NoccyLabs\LogPipe\Application;
 
+use Symfony\Component\Console\Command\Command as BaseCommand;
 use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Output\ConsoleOutput;
@@ -9,6 +10,7 @@ use NoccyLabs\LogPipe\Plugin\PluginManager;
 use Symfony\Component\EventDispatcher\EventDispatcher;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\ContainerInterface;
+use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\Yaml\Yaml;
 
 /**
@@ -121,6 +123,14 @@ class LogPipeApplication extends Application
         foreach ($styles as $name=>$style) {
             $formatter->setStyle($name, $style);
         }
+    }
+    
+    public function add(BaseCommand $command)
+    {
+        if ($command instanceof ContainerAwareInterface) {
+            $command->setContainer($this->container);
+        }
+        parent::add($command);
     }
 
     public function getEventDispatcher()
