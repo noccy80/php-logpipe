@@ -10,3 +10,5 @@ autoload:
 
 plugin:
     class:  LogPipe\Plugin\Dumper\ChannelUtil\ChannelUtilPlugin
+    depends:
+        - logpipe.corestats

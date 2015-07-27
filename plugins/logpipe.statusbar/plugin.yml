@@ -10,3 +10,5 @@ autoload:
 
 plugin:
     class:  LogPipe\Plugin\StatusBar\StatusBarPlugin
+    depends:
+        - logpipe.corestats

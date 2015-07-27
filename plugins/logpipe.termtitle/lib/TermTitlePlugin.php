@@ -4,10 +4,13 @@ namespace LogPipe\Plugin\TermTitle;
 
 use NoccyLabs\LogPipe\Plugin\Plugin;
 use NoccyLabs\LogPipe\Message\MessageEvent;
+use NoccyLabs\LogPipe\Application\LogDumper\DumperEvent;
 
 class TermTitlePlugin extends Plugin
 {
     protected $counter = 0;
+    
+    protected $stats;
     
     /**
      * Called when the plugin is loaded
@@ -16,12 +19,17 @@ class TermTitlePlugin extends Plugin
      */
     public function onLoad()
     {
-        $this->addEventListener(MessageEvent::PRE_FILTER, [ $this, "onMessage" ]);
+        $this->stats = $this->getContainer()->get("plugin.corestats.stats");
+        $this->addEventListener(DumperEvent::IDLE_REFRESH, [ $this, "onRefresh" ]);
     }
     
-    public function onMessage(MessageEvent $message)
+    public function onRefresh(DumperEvent $event)
     {
-        $this->counter++;
-        echo "\e]0;LogPipe [{$this->counter}]\x07";
+        $count = $this->stats->getNumDisplayedMessages();
+        if ($this->counter == $count) {
+            return;
+        }
+        $this->counter = $count;
+        echo "\e]0;LogPipe [{$count}]\x07";
     }
 }

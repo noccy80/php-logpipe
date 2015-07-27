@@ -12,22 +12,19 @@ class StatusBarPlugin extends Plugin
 {
 
     protected $statusLine;
-    
-    protected $squelched = 0;
-    
-    protected $received = 0;
 
+    protected $stats;
 
     public function onLoad()
     {
+        $this->stats = $this->getContainer()->get("plugin.corestats.stats");
+        
         $this->addEventListener(DumperEvent::BEFORE_BATCH,  [ $this, "onBeforeBatch" ]);
         $this->addEventListener(DumperEvent::AFTER_BATCH,   [ $this, "onAfterBatch" ]);
         $this->addEventListener(DumperEvent::DUMPING,       [ $this, "onDumping" ]);
         $this->addEventListener(DumperEvent::SUSPEND,       [ $this, "onSuspend" ]);
         $this->addEventListener(DumperEvent::TERMINATING,   [ $this, "onTerminating" ]);
         $this->addEventListener(DumperEvent::IDLE_REFRESH,  [ $this, "onIdleRefresh" ]);
-        $this->addEventListener(MessageEvent::SQUELCHED,    [ $this, "onMessageSquelched" ]);
-        $this->addEventListener(MessageEvent::PRE_FILTER,   [ $this, "onMessageReceived" ]);
 
         
         $this->statusLine = new StatusLine();
@@ -64,16 +61,6 @@ class StatusBarPlugin extends Plugin
     {
         $this->clearStatusLine();
     }
-    
-    public function onMessageSquelched(MessageEvent $event)
-    {
-        $this->squelched++;
-    }
-    
-    public function onMessageReceived(MessageEvent $event)
-    {
-        $this->received++;
-    }
 
     public function onIdleRefresh(DumperEvent $event)
     {
@@ -92,12 +79,12 @@ class StatusBarPlugin extends Plugin
 
     public function getSquelchPanel()
     {
-        return [ Unicode::char(0x26D5). " " . $this->squelched, "30;43" ];
+        return [ Unicode::char(0x26D5). " " . $this->stats->getNumFilteredMessages(), "30;43" ];
     }
 
     public function getTotalPanel()
     {
-        return [ Unicode::char(0x27F3). " " . $this->received, "32;1" ];
+        return [ Unicode::char(0x27F3). " " . $this->stats->getNumReceivedMessages(), "32;1" ];
     }
         
     public function getDebugPanel()
