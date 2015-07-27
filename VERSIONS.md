@@ -3,10 +3,13 @@ LogPipe Version history
 
     [!] Improvement  [*] Milestone  [+] New feature  [-] Removed feature
 
-    0.2.8   [+] Plugin architecture for extending the dumper.
+    0.3.0   [+] Plugin architecture for extending the dumper.
             [+] Events implemented to facilitate writing plugins.
             [!] The status bar from the interactive dumper is now a plugin, and thus available
                 in both dumpers.
+            [!] The terminal title code has been turned into a plugin.
+            [+] A bunch of awesome plugins added, to help visualize the logging process as well
+                as relay messages and capture errors and metrics.
             [!] A lot of rewrites and optimizations
     0.2.7   [!] The ConsoleHandler is now a fully compliant PSR logger.
             [+] Added a status bar to the interactive dumper
