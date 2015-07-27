@@ -85,6 +85,8 @@ class LogTestCommand extends AbstractCommand
 
         $logger->error(new \Exception("This is an exception"));
 
+        $logger = new Logger("metrics");
+        $logger->pushHandler(new LogPipeHandler($endpoint));
         $logger->info("!metric.log page.hit", [ "route"=>"homepage" ]);
         $logger->info("!metric.log data.written", [ "records"=>13, "failed"=>0, "duration"=>199.7, "size"=>445032 ]);
         $logger->info("!metric.log feature-use", [ "privacy"=>true, "notifications"=>["email"=>true, "mobile"=>true, "desktop"=>false ]]);

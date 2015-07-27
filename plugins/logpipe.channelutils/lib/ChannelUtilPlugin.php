@@ -40,7 +40,7 @@ class ChannelUtilPlugin extends Plugin
         $rowi = 0;
         
         foreach ($this->channelsSeen as $channel=>$count) {
-            printf("\e[%d;%dH\e[33;44m %5d \e[37m%-{$maxl}s \e[0m",
+            printf("\e[%d;%dH\e[36;44;1m %5d \e[37;21m%-{$maxl}s \e[0m",
                 ++$rowi,
                 $offs,
                 $count,
