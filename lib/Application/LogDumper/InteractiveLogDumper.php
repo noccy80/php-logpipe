@@ -57,6 +57,7 @@ class InteractiveLogDumper extends LogDumper
         $this->eventDispatcher->dispatch(DumperEvent::DUMPING, new DumperEvent());
         
         $inBatch = false;
+        $ticks = 0;
 
         while (!$signal()) {
             if ($this->getOption("output.title")) { $this->updateTitle(); }
@@ -72,6 +73,11 @@ class InteractiveLogDumper extends LogDumper
                 if ($inBatch) {
                     $inBatch = false;
                     $this->eventDispatcher->dispatch(DumperEvent::AFTER_BATCH, new DumperEvent());
+                } else {
+                    if (microtime(true)>$ticks) {
+                        $this->eventDispatcher->dispatch(DumperEvent::IDLE_REFRESH, new DumperEvent());
+                        $ticks = microtime(true)+1;
+                    }
                 }
                 
             }

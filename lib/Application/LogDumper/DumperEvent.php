@@ -11,4 +11,5 @@ class DumperEvent extends Event
     const BEFORE_BATCH      = "dumper.batch.before";
     const AFTER_BATCH       = "dumper.batch.after";
     const SUSPEND           = "dumper.suspend";
+    const IDLE_REFRESH      = "dumper.idle_refresh";
 }

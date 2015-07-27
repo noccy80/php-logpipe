@@ -121,7 +121,8 @@ class LogDumper
 
         $break_at = ($this->timeout) ? time()+$this->timeout : null;
 
-        $inBatch = false;;
+        $inBatch = false;
+        $ticks = 0;
         
         $this->eventDispatcher->dispatch(DumperEvent::DUMPING, new DumperEvent());
 
@@ -138,6 +139,11 @@ class LogDumper
             if ($inBatch) {
                 $this->eventDispatcher->dispatch(DumperEvent::AFTER_BATCH, new DumperEvent());
                 $inBatch = false;
+            } else {
+                if (microtime(true)>$ticks) {
+                    $this->eventDispatcher->dispatch(DumperEvent::IDLE_REFRESH, new DumperEvent());
+                    $ticks = microtime(true)+1;
+                }
             }
             usleep(10000);
 

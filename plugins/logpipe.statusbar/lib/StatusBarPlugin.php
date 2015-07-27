@@ -25,6 +25,7 @@ class StatusBarPlugin extends Plugin
         $this->addEventListener(DumperEvent::DUMPING,       [ $this, "onDumping" ]);
         $this->addEventListener(DumperEvent::SUSPEND,       [ $this, "onSuspend" ]);
         $this->addEventListener(DumperEvent::TERMINATING,   [ $this, "onTerminating" ]);
+        $this->addEventListener(DumperEvent::IDLE_REFRESH,  [ $this, "onIdleRefresh" ]);
         $this->addEventListener(MessageEvent::SQUELCHED,    [ $this, "onMessageSquelched" ]);
         $this->addEventListener(MessageEvent::PRE_FILTER,   [ $this, "onMessageReceived" ]);
 
@@ -74,6 +75,11 @@ class StatusBarPlugin extends Plugin
         $this->received++;
     }
 
+    public function onIdleRefresh(DumperEvent $event)
+    {
+        $this->statusLine->update();
+    }
+    
     protected function clearStatusLine()
     {
         $this->statusLine->erase();        
