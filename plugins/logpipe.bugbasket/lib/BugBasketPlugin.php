@@ -10,6 +10,8 @@ class BugBasketPlugin extends Plugin
     /** @var BugStash */
     protected $stash;
     
+    protected $stashFile;
+    
     /**
      * Called when the plugin is loaded
      *
@@ -20,6 +22,12 @@ class BugBasketPlugin extends Plugin
         $this->getContainer()->set("plugin.bugbasket", $this);
         $this->getApplication()->add(new BugsCommand());
         $this->addEventListener("message.pre_filter", [ $this, "onMessagePreFilter" ]);
+        
+        if (($stashFile = getenv("BUG_STASH"))) {
+            $this->stashFile = $stashFile;
+        } else {
+            $this->stashFile = getcwd()."/bugstash.db";
+        }
     }
 
     /**
@@ -43,16 +51,15 @@ class BugBasketPlugin extends Plugin
     public function getStash()
     {
         if (!$this->stash) {
-            $this->stash = new BugStash(getcwd()."/bugstash.db");
+            $this->stash = new BugStash($this->stashFile);
         }
         return $this->stash;
     }
     
     public function dropStash()
     {
-        $stashFile = getcwd()."/bugstash.db";
-        if (file_exists($stashFile)) {
-            unlink($stashFile);
+        if (file_exists($this->stashFile)) {
+            unlink($this->stashFile);
         }
     }
 }

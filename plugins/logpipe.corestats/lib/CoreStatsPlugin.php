@@ -35,6 +35,7 @@ class CoreStatsPlugin extends Plugin
         $channel = $message->getChannel();
         if (!array_key_exists($channel, $this->channelsSeen)) {
             $this->channelsSeen[$channel] = 0;
+            ksort($this->channelsSeen);
         }
         $this->channelsSeen[$channel]++;
     }

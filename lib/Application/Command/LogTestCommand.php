@@ -37,7 +37,7 @@ class LogTestCommand extends AbstractCommand
         $this->setName($this->cmdname);
         $this->setDescription("Sends a few test events to an endpoint");
         $this->addArgument("endpoint", InputArgument::OPTIONAL, "The endpoint or pipe to dump", DEFAULT_ENDPOINT);
-        $this->addOption("test", "t", InputOption::VALUE_REQUIRED, "The test to run", "default");
+        $this->addOption("test", "t", InputOption::VALUE_REQUIRED, "The test to run (default,large,stress,random)", "default");
         $this->setHelp(self::HELP_TEXT);
     }
 
@@ -96,12 +96,17 @@ class LogTestCommand extends AbstractCommand
 
     private function runRandomTest($endpoint)
     {
-        $logger = new Logger("main");
-        $logger->pushHandler(new LogPipeHandler($endpoint));
+        $loggers = array_map(function ($channel) use ($endpoint) {
+            $logger = new Logger($channel);
+            $logger->pushHandler(new LogPipeHandler($endpoint));
+            return [ $logger, $channel ];
+        }, [ "main", "alternate", "cron", "test", "services.bar", "foo.importer", "foo.exporter" ]);
+
 
         for ($n = 1; $n < 10; $n++) {
             foreach(["debug","info","notice","warning","error","critical","alert","emergency"] as $level) {
-                $logger->{$level}("This is a test message of level '{$level}' sent over the 'main' channel");
+                list ($logger, $channel) = $loggers[array_rand($loggers)];
+                $logger->{$level}("This is a test message of level '{$level}' sent over the '{$channel}' channel");
                 $delay = rand(1,1000)*1000;
                 usleep($delay);
             }

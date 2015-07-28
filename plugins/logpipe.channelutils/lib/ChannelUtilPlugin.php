@@ -28,12 +28,13 @@ class ChannelUtilPlugin extends Plugin
         $channelsSeen = $this->stats->getChannelsSeen();
         
         $maxl = max(array_map("strlen", array_keys($channelsSeen)));
+        $maxc = max(array_map("strlen", array_values($channelsSeen)));
         $cols = (int)exec("tput cols");
-        $offs = $cols - $maxl - 7;
+        $offs = $cols - $maxl - $maxc - 5;
         $rowi = 0;
         
         foreach ($channelsSeen as $channel=>$count) {
-            printf("\e[%d;%dH\e[36;44;1m %5d \e[37;21m%-{$maxl}s \e[0m",
+            printf("\e[%d;%dH\e[30;1;7;47m %{$maxc}d \e[44;37;21;27m %-{$maxl}s   \e[0m",
                 ++$rowi,
                 $offs,
                 $count,
