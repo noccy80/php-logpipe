@@ -62,8 +62,6 @@ class PluginsCommand extends AbstractCommand
             $this->disablePlugin($disable);
             return;
         }
-        
-        $this->output->writeln("Available plugins:");
 
         $table = new Table($this->output);
         $table->setStyle("compact");
@@ -71,12 +69,12 @@ class PluginsCommand extends AbstractCommand
         foreach ($info as $name=>$manifest) {
             if ($manifest->isLoaded()) {
                 if ($manifest->isDependency()) {
-                    $check = "<options=bold;fg=green>Dependency</options=bold;fg=green>";
+                    $check = "[<fg=green>x</fg=green>] <options=bold;fg=green>Dependency</options=bold;fg=green>";
                 } else {
-                    $check = "<options=bold;fg=cyan>Loaded</options=bold;fg=cyan>";
+                    $check = "[<fg=cyan;options=bold>x</fg=cyan;options=bold>] <options=bold;fg=cyan>Loaded</options=bold;fg=cyan>";
                 }
             } else {
-                $check = "<options=bold;fg=black>Inactive</options=bold;fg=black>";
+                $check = "[ ] <options=bold;fg=black>Inactive</options=bold;fg=black>";
             }
             $description = $manifest->getDescription();
             $version = $manifest->getVersion();
