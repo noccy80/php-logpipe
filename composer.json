@@ -5,13 +5,13 @@
     "keywords": [ "logging", "debugging" ],
     "require": {
         "php": ">=5.4.0",
-        "symfony/console": "~2.6",
+        "symfony/console": "~2.6|~3.0",
         "psr/log": "1.*",
-        "symfony/yaml": "~2.6",
-        "symfony/dependency-injection": "~2.6",
-        "symfony/event-dispatcher": "~2.6",
-        "symfony/expression-language": "~2.6",
-        "symfony/var-dumper": "~2.6"
+        "symfony/yaml": "~2.6|~3.0",
+        "symfony/dependency-injection": "~2.6|~3.0",
+        "symfony/event-dispatcher": "~2.6|~3.0",
+        "symfony/expression-language": "~2.6|~3.0",
+        "symfony/var-dumper": "~2.6|~3.0"
     },
     "require-dev": {
         "monolog/monolog": "~1.0"
